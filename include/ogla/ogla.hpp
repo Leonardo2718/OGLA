@@ -34,9 +34,10 @@ Distributed under the Boost Software License, Version 1.0.
 namespace ogla {
 
 class Rule;
-typedef std::vector<Rule> RuleList;
+using RuleList = std::vector<Rule>;
 class Token;
-typedef std::vector<Token> TokenList;
+using TokenList = std::vector<Token>;
+class Grammar;
 
 /*
 The TokenRule class holds describes the rule used to identify a token.
@@ -54,13 +55,26 @@ class Rule {
                             //   to identify the end
 };
 
+template<class BidirectionalIterator>
+Token firstToken(BidirectionalIterator first, BidirectionalIterator last, const RuleList& rules);
+/*  returns the first token identified using `rules` inside the string specified by a starting and
+    ending iterators
+*/
+
+Token firstToken(const std::string& text, const RuleList& rules);
+/*  returns the first token identified using `rules` */
+
 /*
 The Token class represents a token in the analyzed text.
 */
 class Token {
+    // friend function declerations
+    friend Token firstToken(const std::string& text, const RuleList& rules);
+    template<class BidirectionalIterator>
+    friend Token firstToken(BidirectionalIterator first, BidirectionalIterator last, const RuleList& rules);
+
     public:
         Token() {}
-        Token(Rule r, std::smatch m) : rule(r), match(m), offset(0) {}
 
         std::string name() {
             return rule.name;
@@ -95,20 +109,13 @@ class Token {
         Rule rule;          // holds the rule used to match the token
         std::smatch match;  // holds the lexem matched associated with the token
         int offset;         // holds the offset for the token position
+
+        Token(Rule r, std::smatch m) : rule(r), match(m), offset(0) {}
+        /*  private constructor that creates a token */
 };
 
-template<class BidirectionalIterator>
-Token firstToken(BidirectionalIterator first, BidirectionalIterator last, const RuleList& rules);
-/*  returns the first token identified using `rules` inside the string specified by a starting and
-    ending iterators
-*/
-
-Token firstToken(const std::string& text, const RuleList& rules);
-/*  returns the first token identified using `rules` */
 
 
-
-class Grammar;
 TokenList analyze(const std::string& text, const Grammar& grammar);
 /*  returns the tokenized text as a list of tokens */
 
