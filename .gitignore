@@ -1,4 +1,9 @@
+# ignore binary files
 *.o
 *.a
+
+# ignore unit test executables
 test_*
+
+# don't ignore the unit test source files
 !test_*.*

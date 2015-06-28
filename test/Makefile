@@ -1,7 +1,8 @@
-# Compiler, tools, and options
+# compiler, tools, and options
 CXX			= g++
 CXXFLAGS	= -Wall -std=c++14
 
+# prerequisite files
 HEADERS		= ../include/ogla/ogla.hpp
 ARCHIVES	= ../ogla.a
 

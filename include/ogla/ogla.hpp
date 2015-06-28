@@ -1,5 +1,4 @@
 /*
-
 Project: OGLA
 File: ogla.hpp
 Author: Leonardo Banderali

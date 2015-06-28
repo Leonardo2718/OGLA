@@ -1,9 +1,9 @@
 /*
 Project: OGLA
-File: lexer_test.cpp
+File: test_lexer.cpp
 Author: Leonardo Banderali
 Created: June 26, 2015
-Last Modified: June 26, 2015
+Last Modified: June 27, 2015
 
 Copyright (C) 2015 Leonardo Banderali
 Distributed under the Boost Software License, Version 1.0.
