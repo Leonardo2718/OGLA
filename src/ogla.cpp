@@ -18,7 +18,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 */
 
-#include "ogla.hpp"
+#include "../include/ogla/ogla.hpp"
 
 //include standard c++ libraries
 #include <algorithm>

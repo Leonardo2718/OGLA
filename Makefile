@@ -6,13 +6,19 @@ CXXFLAGS	= $(CFLAGS) -std=c++14
 AR			= ar
 
 # Files
-HEADERS		= src/ogla.hpp
+HEADERS		= include/ogla/ogla.hpp
 SOURCES		= src/ogla.cpp
-OBJS		= $(subst src,obj,$(subst .cpp,.o,$(SOURCES)))
+OBJS		= $(subst src,bin,$(subst .cpp,.o,$(SOURCES)))
 #OBJS		= $(subst .cpp,.o,$(SOURCES))
 #ARCHIVES	= ogla.a
 
 # Make rules
+
+#all: ogla.a
+#	$(info header files: ${HEADERS})
+#	$(info source files: ${SOURCES})
+#	$(info object files: ${OBJS})
+#	$(info archives: $(ARCHIVES))
 
 ogla.a: $(OBJS)
 	$(AR) rvs "$@" $(OBJS)
@@ -26,7 +32,7 @@ ogla.a: $(OBJS)
 
 #$(OBJS): $(SOURCES) $(HEADERS) Makefile
 
-obj/%.o: src/%.cpp $(HEADERS)
+bin/%.o: src/%.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c -o "$@" "$<"
 
 #%.a: $(OBJS)
