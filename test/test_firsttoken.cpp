@@ -28,12 +28,12 @@ BOOST_AUTO_TEST_CASE( test_firsttoken ) {
     ogla::RuleList rules{rule1, rule2};
 
     ogla::Token token1 = ogla::firstToken(text, rules);
-    ogla::Token token2 = ogla::firstToken(text.cbegin(), text.cend(), rules);
+    ogla::Token token2 = ogla::firstToken(text.cbegin() + 5, text.cend(), rules);
 
-    BOOST_CHECK( token1.name() == std::string("rule_1") );
-    //BOOST_CHECK( token2.name() == std::string("rule_2") );
-    BOOST_CHECK( token1.lexeme() == std::string("quick") );
-    //BOOST_CHECK( token2.lexeme() == std::string("jumps") );
-    BOOST_CHECK( token1.position() == 4 );
-    //BOOST_CHECK( token2.position() == 20 );
+    BOOST_CHECK_EQUAL( token1.name(), std::string("rule_1") );
+    BOOST_CHECK_EQUAL( token2.name(), std::string("rule_2") );
+    BOOST_CHECK_EQUAL( token1.lexeme(), std::string("quick") );
+    BOOST_CHECK_EQUAL( token2.lexeme(), std::string("jumps") );
+    BOOST_CHECK_EQUAL( token1.position(), 4 );
+    BOOST_CHECK_EQUAL( token2.position(), 15 );
 }
