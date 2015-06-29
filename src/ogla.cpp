@@ -25,6 +25,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 
 
+//~function implementations~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
 returns the first token identified using `rules`
 */
@@ -57,7 +58,7 @@ ogla::TokenList ogla::analyze(const std::string& text, const Grammar& grammar) {
 
 
 
-//~Grammar class~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~Grammar class~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /*
 loads the default grammar used to load other grammars

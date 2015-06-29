@@ -27,9 +27,11 @@ BOOST_AUTO_TEST_CASE( test_firsttoken ) {
     ogla::Rule rule2{"rule_2", "j[A-Za-z]+ps"};
     ogla::RuleList rules{rule1, rule2};
 
+    // pre-test code
     ogla::Token token1 = ogla::firstToken(text, rules);
     ogla::Token token2 = ogla::firstToken(text.cbegin() + 5, text.cend(), rules);
 
+    // run tests
     BOOST_CHECK_EQUAL( token1.name(), std::string("rule_1") );
     BOOST_CHECK_EQUAL( token2.name(), std::string("rule_2") );
     BOOST_CHECK_EQUAL( token1.lexeme(), std::string("quick") );

@@ -25,11 +25,13 @@ Distributed under the Boost Software License, Version 1.0.
 #include <string>
 #include <vector>
 #include <regex>
-#include <iostream>
+
+
 
 namespace ogla {
 
-// forward declarations and function prototypes
+//~forward declarations and function prototypes~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 class Rule;     // type for describing a rule used to identify a token
 using RuleList = std::vector<Rule>;
 class Token;    // type representing a token in analyzed text
@@ -47,6 +49,10 @@ Token firstToken(const std::string& text, const RuleList& rules);
 
 TokenList analyze(const std::string& text, const Grammar& grammar);
 /*  returns a list of tokens representing `text` tokenized using `grammar` */
+
+
+
+//~classes~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /*
 A class for describing a rule used to identify a token (tokenization rule).
@@ -69,9 +75,9 @@ A class for representing a token in analyzed text.
 */
 class Token {
     // friends
-    friend Token firstToken(const std::string& text, const RuleList& rules);
     template<class BidirectionalIterator>
     friend Token firstToken(BidirectionalIterator first, BidirectionalIterator last, const RuleList& rules);
+    friend Token firstToken(const std::string& text, const RuleList& rules);
 
     public:
         Token() {}
@@ -147,6 +153,10 @@ class Grammar {
         RuleList rules;             // holds all tokenization rules
 };
 
+
+
+//~function implementations~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 /*
 - returns the first token identified using `rules`
 - `first` is an iterator (better if const_iterator) pointing to the first character of the text to be analyzed
@@ -166,6 +176,6 @@ Token firstToken(BidirectionalIterator first, BidirectionalIterator last, const 
     return t;
 }
 
-}
+}   // namespace ogla
 
 #endif  //OGLA_HPP
