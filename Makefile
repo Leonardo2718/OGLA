@@ -22,7 +22,7 @@ ogla.a: $(OBJS)
 	$(AR) rvs "$@" $(OBJS)
 
 bin/%.o: src/%.cpp $(HEADERS) Makefile
-	$(CXX) $(CXXFLAGS) -c -o "$@" "$<"
+	$(CXX) $(CXXFLAGS) -c "$<" -o "$@"
 
 clean:
 	rm $(OBJS)

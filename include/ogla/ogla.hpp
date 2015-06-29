@@ -113,6 +113,22 @@ class Token {
         /*  private constructor that creates a token */
 };
 
+/*
+returns the first token identified using `rules` inside the string specified by a starting andending iterators
+*/
+template<class BidirectionalIterator>
+Token firstToken(BidirectionalIterator first, BidirectionalIterator last, const RuleList& rules) {
+    Token t;
+
+    for (auto r: rules) {
+        std::smatch m;
+        if (std::regex_search(first, last, m, r.rgx) && (t.position() > m.position() || t.position() < 0))
+            t = Token(r, m);
+    }
+
+    return t;
+}
+
 
 
 TokenList analyze(const std::string& text, const Grammar& grammar);

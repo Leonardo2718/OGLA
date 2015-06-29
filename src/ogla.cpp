@@ -28,7 +28,7 @@ Distributed under the Boost Software License, Version 1.0.
 /*
 returns the first token identified using `rules` inside the string specified by a starting andending iterators
 */
-template<class BidirectionalIterator>
+/*template<class BidirectionalIterator>
 ogla::Token ogla::firstToken(BidirectionalIterator first, BidirectionalIterator last, const RuleList& rules) {
     Token t;
 
@@ -39,7 +39,7 @@ ogla::Token ogla::firstToken(BidirectionalIterator first, BidirectionalIterator 
     }
 
     return t;
-}
+}*/
 
 /*
 returns the first token identified using `rules`

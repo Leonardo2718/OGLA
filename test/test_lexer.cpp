@@ -19,6 +19,10 @@ int main() {
     ogla::Grammar g = ogla::Grammar::load();
     std::string text = "Hello, my name is foo, what's yours?\nbar.\nNice to meet you quux!\n";
     std::cout << text;
+    ogla::Rule rule1{"rule_1", "quick"};
+    ogla::Rule rule2{"rule_2", "j[A-Za-z]+ps"};
+    ogla::RuleList rules{rule1, rule2};
+    ogla::Token token2 = ogla::firstToken(text.cbegin(), text.cend(), rules);
 
     ogla::TokenList tl = ogla::analyze(text, g);
     for (auto t : tl) {
