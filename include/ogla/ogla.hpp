@@ -3,7 +3,7 @@ Project: OGLA
 File: ogla.hpp
 Author: Leonardo Banderali
 Created: March 07, 2015
-Last Modified: March 07, 2015
+Last Modified: June 28, 2015
 
 Description:
     OGLA is generic lexical analyzer intended for quick and fast integration into
@@ -42,8 +42,8 @@ template<class BidirectionalIterator>
 Token firstToken(BidirectionalIterator first, BidirectionalIterator last, const RuleList& rules);
 Token firstToken(const std::string& text, const RuleList& rules);
 /*  - returns the first token identified using `rules`
-    - `first` is an iterator (better if const_iterator) pointing to the first character of the text to be analyzed
-    - `last` is an iterator (better if const_iterator) pointing to one character past the end of the text to be analyzed
+    - `first` is an iterator (prefer const_iterator) pointing to the first character of the text to be analyzed
+    - `last` is an iterator (prefer const_iterator) pointing to one character past the end of the text to be analyzed
     - `text` is the text to be analyzed
 */
 
@@ -159,8 +159,8 @@ class Grammar {
 
 /*
 - returns the first token identified using `rules`
-- `first` is an iterator (better if const_iterator) pointing to the first character of the text to be analyzed
-- `last` is an iterator (better if const_iterator) pointing to one character past the end of the text to be analyzed
+- `first` is an iterator (prefer const_iterator) pointing to the first character of the text to be analyzed
+- `last` is an iterator (prefer const_iterator) pointing to one character past the end of the text to be analyzed
 - `text` is the text to be analyzed
 */
 template<class BidirectionalIterator>

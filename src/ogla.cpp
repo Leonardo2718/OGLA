@@ -3,7 +3,7 @@ Project: OGLA
 File: ogla.cpp
 Author: Leonardo Banderali
 Created: March 07, 2015
-Last Modified: March 08, 2015
+Last Modified: June 28, 2015
 
 Description:
     OGLA is generic lexical analyzer intended for quick and fast integration into
@@ -71,8 +71,10 @@ ogla::Grammar ogla::Grammar::load() {
     //$ This grammar is only used for testing purposes and does not $$
     //$ represent anything useful.
     g.rules.push_back(Rule("foo_rule", "foo"));
-    g.rules.push_back(Rule("bar_rule", "bar"));
-    g.rules.push_back(Rule("quux_rule", "quux"));
+    g.rules.push_back(Rule("bar_rule", "\\bbar\\b"));
+    g.rules.push_back(Rule("quux_rule", "\\bqu+x\\b"));
+    g.rules.push_back(Rule("quick_rule", "\\bquick\\b"));
+    g.rules.push_back(Rule("c_rule", "\\b[A-Za-z]+c[A-Za-z]+\\b"));
     //$                                                             $$
     //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
 
