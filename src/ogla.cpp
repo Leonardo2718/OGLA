@@ -26,39 +26,14 @@ Distributed under the Boost Software License, Version 1.0.
 
 
 /*
-returns the first token identified using `rules` inside the string specified by a starting andending iterators
-*/
-/*template<class BidirectionalIterator>
-ogla::Token ogla::firstToken(BidirectionalIterator first, BidirectionalIterator last, const RuleList& rules) {
-    Token t;
-
-    for (auto r: rules) {
-        std::smatch m;
-        if (std::regex_search(first, last, m, r.rgx) && (t.position() > m.position() || t.position() < 0))
-            t = Token(r, m);
-    }
-
-    return t;
-}*/
-
-/*
 returns the first token identified using `rules`
 */
 ogla::Token ogla::firstToken(const std::string& text, const RuleList& rules) {
-    /*Token t;
-
-    // identify the first matching token
-    for (auto r: rules) {
-        std::smatch m;
-        if (std::regex_search(text, m, r.rgx) && (t.position() > m.position() || t.position() < 0))
-            t = Token(r, m);
-    }*/
-
     return firstToken(text.begin(), text.end(), rules);
 }
 
 /*
-returns the tokenized text as a list of tokens
+returns a list of tokens representing `text` tokenized using `grammar`
 */
 ogla::TokenList ogla::analyze(const std::string& text, const Grammar& grammar) {
     TokenList tl;   // token list to be returned
