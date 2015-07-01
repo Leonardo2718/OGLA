@@ -38,8 +38,8 @@ class Token;    // type representing a token in analyzed text
 using TokenList = std::vector<Token>;
 class Grammar;  // type representing a lexcical analyses grammar
 
-template<class BidirectionalIterator>
-Token firstToken(BidirectionalIterator first, BidirectionalIterator last, const RuleList& rules, const int offset = 0);
+template<class RandomAccessIterator>
+Token firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset = 0);
 Token firstToken(const std::string& text, const RuleList& rules, const int offset = 0);
 /*  - returns the first token identified using `rules`
     - `first` is an iterator (prefer const_iterator) pointing to the first character of the text to be analyzed
@@ -85,7 +85,7 @@ A class for representing a token in analyzed text.
 */
 class Token {
     public:
-        Token() {}
+        Token() : offset{0} {}
 
         std::string name() {
             return rule.name();
@@ -112,13 +112,9 @@ class Token {
                 return match.str();
         }
 
-        void set_offset(int n) {
-            offset = n;
-        }
-
     // friends:
-    template<class BidirectionalIterator>
-    friend Token firstToken(BidirectionalIterator first, BidirectionalIterator last, const RuleList& rules, const int offset);
+    template<class RandomAccessIterator>
+    friend Token firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset);
     friend Token firstToken(const std::string& text, const RuleList& rules, const int offset);
 
     private:
@@ -126,7 +122,7 @@ class Token {
         std::smatch match;  // holds the lexem matched associated with the token
         int offset;         // holds the offset for the token position
 
-        Token(Rule r, std::smatch m) : rule(r), match(m), offset(0) {}
+        Token(Rule r, std::smatch m, int _offset = 0) : rule{r}, match{m}, offset{_offset} {}
         /*  private constructor that creates a token */
 };
 
@@ -173,15 +169,14 @@ class Grammar {
 - `last` is an iterator (prefer const_iterator) pointing to one character past the end of the text to be analyzed
 - `offset` is the offset from the start of the string to at which to begin looking for a token
 */
-template<class BidirectionalIterator>
-Token firstToken(BidirectionalIterator first, BidirectionalIterator last, const RuleList& rules, const int offset) {
+template<class RandomAccessIterator>
+Token firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset) {
     Token t;
     if (first + offset < last) {
+        std::smatch m;
         for (auto r: rules) {
-            std::smatch m;
             if (std::regex_search(first + offset, last, m, r.regex()) && (m.position() + offset < t.position() || t.position() < 0)) {
-                t = Token(r, m);
-                t.offset = offset;
+                t = Token(r, m, offset);
             }
         }
     }

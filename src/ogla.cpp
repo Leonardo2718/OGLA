@@ -42,12 +42,9 @@ returns a list of tokens representing `text` tokenized using `grammar`
 ogla::TokenList ogla::analyze(const std::string& text, const Grammar& grammar) {
     TokenList tl;   // token list to be returned
 
-    const auto startPos = text.begin();
-    const auto endPos = text.end();
-    Token t;// = firstToken(startPos, endPos, grammar.rules);
     int p = 0;
     while (true) {
-        t = firstToken(startPos, endPos, grammar.rules, p);
+        Token t = firstToken(text, grammar.rules, p);   // should call move constructor
 
         if (t.position() < 0)
             break;
