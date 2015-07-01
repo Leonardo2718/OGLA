@@ -26,11 +26,14 @@ Distributed under the Boost Software License, Version 1.0.
 
 
 //~function implementations~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 /*
-returns the first token identified using `rules`
+- returns the first token identified using `rules`
+- `text` is the text to be analyzed
+- `offset` is the offset from the start of the string to at which to begin looking for a token
 */
-ogla::Token ogla::firstToken(const std::string& text, const RuleList& rules) {
-    return firstToken(text.begin(), text.end(), rules);
+ogla::Token ogla::firstToken(const std::string& text, const RuleList& rules, const int offset) {
+    return firstToken(text.begin(), text.end(), rules, offset);
 }
 
 /*
@@ -39,17 +42,19 @@ returns a list of tokens representing `text` tokenized using `grammar`
 ogla::TokenList ogla::analyze(const std::string& text, const Grammar& grammar) {
     TokenList tl;   // token list to be returned
 
-    auto startPos = text.begin();
+    const auto startPos = text.begin();
     const auto endPos = text.end();
     Token t;// = firstToken(startPos, endPos, grammar.rules);
     int p = 0;
     while (true) {
-        t = firstToken(startPos, endPos, grammar.rules);
+        t = firstToken(startPos, endPos, grammar.rules, p);
+
         if (t.position() < 0)
             break;
-        p = int(startPos - text.begin());
-        startPos += t.position() + t.length();
-        t.set_offset(p);
+        //p = int(startPos - text.begin());
+        p = t.position() + t.length();
+        //startPos += t.position() + t.length();
+        //t.set_offset(p);
         tl.push_back(t);
     }
 

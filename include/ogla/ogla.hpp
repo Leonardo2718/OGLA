@@ -3,7 +3,7 @@ Project: OGLA
 File: ogla.hpp
 Author: Leonardo Banderali
 Created: March 07, 2015
-Last Modified: June 28, 2015
+Last Modified: June 30, 2015
 
 Description:
     OGLA is generic lexical analyzer intended for quick and fast integration into
@@ -39,12 +39,13 @@ using TokenList = std::vector<Token>;
 class Grammar;  // type representing a lexcical analyses grammar
 
 template<class BidirectionalIterator>
-Token firstToken(BidirectionalIterator first, BidirectionalIterator last, const RuleList& rules);
-Token firstToken(const std::string& text, const RuleList& rules);
+Token firstToken(BidirectionalIterator first, BidirectionalIterator last, const RuleList& rules, const int offset = 0);
+Token firstToken(const std::string& text, const RuleList& rules, const int offset = 0);
 /*  - returns the first token identified using `rules`
     - `first` is an iterator (prefer const_iterator) pointing to the first character of the text to be analyzed
     - `last` is an iterator (prefer const_iterator) pointing to one character past the end of the text to be analyzed
     - `text` is the text to be analyzed
+    - `offset` is the offset from the start of the string to at which to begin looking for a token
 */
 
 TokenList analyze(const std::string& text, const Grammar& grammar);
@@ -60,30 +61,34 @@ A class for describing a rule used to identify a token (tokenization rule).
 class Rule {
     public:
         Rule() {}
-        Rule(const std::string& _name, const std::string& _rgx) : name{_name}, rgx{_rgx} {}
-        /*  constructs a rule with the name `_name` and uses `_rgx` as regular expression for matching */
+        Rule(const std::string& _name, const std::string& _regex) : ruleName{_name}, rgx{_regex} {}
+        /*  constructs a rule with the name `_name` and uses `_regex` as regular expression for matching */
 
-        std::string name;
-        std::regex rgx;     // holds the regular expression (regex) used to indentify the token
-        RuleList* subrules; // holds rules to identify sub tokens
-        std::regex endrgx;  // for tokens special tokens that use one regex to identify the start and another one
-                            //   to identify the end
+        std::string name() {
+            return ruleName;
+        }
+
+        std::regex regex() {
+            return rgx;
+        }
+
+    private:
+        std::string ruleName;
+        std::regex rgx;         // holds the regular expression (regex) used to indentify the token
+        //RuleList* subrules;     // holds rules to identify sub tokens
+        //std::regex endrgx;      // for tokens special tokens that use one regex to identify the start and another one
+                                //   to identify the end
 };
 
 /*
 A class for representing a token in analyzed text.
 */
 class Token {
-    // friends
-    template<class BidirectionalIterator>
-    friend Token firstToken(BidirectionalIterator first, BidirectionalIterator last, const RuleList& rules);
-    friend Token firstToken(const std::string& text, const RuleList& rules);
-
     public:
         Token() {}
 
         std::string name() {
-            return rule.name;
+            return rule.name();
         }
 
         int position() const {
@@ -111,6 +116,11 @@ class Token {
             offset = n;
         }
 
+    // friends:
+    template<class BidirectionalIterator>
+    friend Token firstToken(BidirectionalIterator first, BidirectionalIterator last, const RuleList& rules, const int offset);
+    friend Token firstToken(const std::string& text, const RuleList& rules, const int offset);
+
     private:
         Rule rule;          // holds the rule used to match the token
         std::smatch match;  // holds the lexem matched associated with the token
@@ -124,9 +134,6 @@ class Token {
 A class representing a lexcical analyses grammar.
 */
 class Grammar {
-    // friends
-    friend TokenList analyze(const std::string& text, const Grammar& grammar);
-
     public:
         // static functions
 
@@ -145,6 +152,9 @@ class Grammar {
             return langName;
         }
 
+    // friends:
+    friend TokenList analyze(const std::string& text, const Grammar& grammar);
+
     protected:
 
     private:
@@ -161,16 +171,19 @@ class Grammar {
 - returns the first token identified using `rules`
 - `first` is an iterator (prefer const_iterator) pointing to the first character of the text to be analyzed
 - `last` is an iterator (prefer const_iterator) pointing to one character past the end of the text to be analyzed
-- `text` is the text to be analyzed
+- `offset` is the offset from the start of the string to at which to begin looking for a token
 */
 template<class BidirectionalIterator>
-Token firstToken(BidirectionalIterator first, BidirectionalIterator last, const RuleList& rules) {
+Token firstToken(BidirectionalIterator first, BidirectionalIterator last, const RuleList& rules, const int offset) {
     Token t;
-
-    for (auto r: rules) {
-        std::smatch m;
-        if (std::regex_search(first, last, m, r.rgx) && (t.position() > m.position() || t.position() < 0))
-            t = Token(r, m);
+    if (first + offset < last) {
+        for (auto r: rules) {
+            std::smatch m;
+            if (std::regex_search(first + offset, last, m, r.regex()) && (m.position() + offset < t.position() || t.position() < 0)) {
+                t = Token(r, m);
+                t.offset = offset;
+            }
+        }
     }
 
     return t;
