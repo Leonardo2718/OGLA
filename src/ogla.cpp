@@ -3,7 +3,7 @@ Project: OGLA
 File: ogla.cpp
 Author: Leonardo Banderali
 Created: March 07, 2015
-Last Modified: June 28, 2015
+Last Modified: June 30, 2015
 
 Description:
     OGLA is generic lexical analyzer intended for quick and fast integration into
@@ -51,10 +51,8 @@ ogla::TokenList ogla::analyze(const std::string& text, const Grammar& grammar) {
 
         if (t.position() < 0)
             break;
-        //p = int(startPos - text.begin());
+
         p = t.position() + t.length();
-        //startPos += t.position() + t.length();
-        //t.set_offset(p);
         tl.push_back(t);
     }
 

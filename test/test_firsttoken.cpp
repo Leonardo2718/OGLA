@@ -3,7 +3,7 @@ Project: OGLA
 File: test_firsttoken.cpp
 Author: Leonardo Banderali
 Created: June 27, 2015
-Last Modified: June 27, 2015
+Last Modified: June 30, 2015
 
 Description: A simple unit test for `ogla::firstToken()`.
 

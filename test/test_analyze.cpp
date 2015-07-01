@@ -3,7 +3,7 @@ Project: OGLA
 File: test_analyze.cpp
 Author: Leonardo Banderali
 Created: June 28, 2015
-Last Modified: June 28, 2015
+Last Modified: June 30, 2015
 
 Description: A simple unit test for `ogla::firstToken()`.
 
@@ -43,18 +43,17 @@ BOOST_AUTO_TEST_CASE( test_analyze ) {
     ogla::TokenList tokens = ogla::analyze(text, grammar);
 
     // run tests
-    //BOOST_CHECK_EQUAL(tokens.size(), expected_tokens.size());
     BOOST_CHECK_MESSAGE(tokens.size() == expected_tokens.size(),
                         "token count: " << tokens.size() << ", expected: " << expected_tokens.size());
     for (int i = 0, s = tokens.size(); i < s; i++) {
-        //BOOST_CHECK_EQUAL(tokens.at(i).lexeme(), std::get<0>(expected_tokens.at(i)));
         BOOST_CHECK_MESSAGE(tokens.at(i).lexeme() == std::get<0>(expected_tokens.at(i)),
-                            "[" << i << "]" << " lexem: " << tokens.at(i).lexeme() << ", exprected: " << std::get<0>(expected_tokens.at(i)));
-        //BOOST_CHECK_EQUAL(tokens.at(i).position(), std::get<1>(expected_tokens.at(i)));
+                            "[" << i << "]" << " lexem: " << tokens.at(i).lexeme()
+                                            << ", exprected: " << std::get<0>(expected_tokens.at(i)));
         BOOST_CHECK_MESSAGE(tokens.at(i).position() == std::get<1>(expected_tokens.at(i)),
-                            "[" << i << "]" << " position: " << tokens.at(i).position() << ", expected: " << std::get<1>(expected_tokens.at(i)));
-        //BOOST_CHECK_EQUAL(tokens.at(i).name(), std::get<2>(expected_tokens.at(i)));
+                            "[" << i << "]" << " position: " << tokens.at(i).position()
+                                            << ", expected: " << std::get<1>(expected_tokens.at(i)));
         BOOST_CHECK_MESSAGE(tokens.at(i).name() == std::get<2>(expected_tokens.at(i)),
-                            "[" << i << "]" << " name: " << tokens.at(i).name() << ", expected: " << std::get<2>(expected_tokens.at(i)));
+                            "[" << i << "]" << " name: " << tokens.at(i).name()
+                                            << ", expected: " << std::get<2>(expected_tokens.at(i)));
     }
 }
