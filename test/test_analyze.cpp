@@ -3,7 +3,7 @@ Project: OGLA
 File: test_analyze.cpp
 Author: Leonardo Banderali
 Created: June 28, 2015
-Last Modified: June 30, 2015
+Last Modified: July 7, 2015
 
 Description: A simple unit test for `ogla::firstToken()`.
 
@@ -26,7 +26,8 @@ BOOST_AUTO_TEST_CASE( test_analyze ) {
     // define test objects
     std::string text{"The quick brown fox jumps over the lazy dog.\n"
                      "foo bar quux\n"
-                     "gosofooeiowe secbarsde qux quuuuuuuuuux\n"};
+                     "gosofooeiowe secbarsde qux quuuuuuuuuux\n"
+                     "This is \"an \\t attempt\" to parse a string\n"};
     ogla::Grammar grammar = ogla::Grammar::load();
     std::vector<std::tuple<std::string, int, std::string>> expected_tokens{
         std::make_tuple("quick", 4, "quick_rule"),
@@ -36,7 +37,10 @@ BOOST_AUTO_TEST_CASE( test_analyze ) {
         std::make_tuple("foo", 62, "foo_rule"),
         std::make_tuple("secbarsde", 71, "c_rule"),
         std::make_tuple("qux", 81, "quux_rule"),
-        std::make_tuple("quuuuuuuuuux", 85, "quux_rule")
+        std::make_tuple("quuuuuuuuuux", 85, "quux_rule"),
+        std::make_tuple("\"", 106, "str_rule"),
+        std::make_tuple("\\t", 110, "escape_rule"),
+        std::make_tuple("\"", 120, "end_str_rule")
     };
 
     // pre-test code

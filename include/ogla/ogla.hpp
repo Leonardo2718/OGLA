@@ -3,7 +3,7 @@ Project: OGLA
 File: ogla.hpp
 Author: Leonardo Banderali
 Created: March 07, 2015
-Last Modified: June 30, 2015
+Last Modified: July 7, 2015
 
 Description:
     OGLA is generic lexical analyzer intended for quick and fast integration into
@@ -25,6 +25,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <string>
 #include <vector>
 #include <regex>
+#include <memory>
 
 
 
@@ -45,7 +46,7 @@ Token firstToken(const std::string& text, const RuleList& rules, const int offse
     - `first` is an iterator (prefer const_iterator) pointing to the first character of the text to be analyzed
     - `last` is an iterator (prefer const_iterator) pointing to one character past the end of the text to be analyzed
     - `text` is the text to be analyzed
-    - `offset` is the offset from the start of the string to at which to begin looking for a token
+    - `offset` is the offset from the start of the string at which to begin looking for a token
 */
 
 TokenList analyze(const std::string& text, const Grammar& grammar);
@@ -61,21 +62,28 @@ A class for describing a rule used to identify a token (tokenization rule).
 class Rule {
     public:
         Rule() {}
-        Rule(const std::string& _name, const std::string& _regex) : ruleName{_name}, rgx{_regex} {}
+        Rule(const std::string& _name, const std::string& _regex)
+            : ruleName{_name}, rgx{_regex} {}
+        Rule(const std::string& _name, const std::string& _regex, std::weak_ptr<RuleList> _nextRules)
+            : ruleName{_name}, rgx{_regex}, nextRules{_nextRules} {}
         /*  constructs a rule with the name `_name` and uses `_regex` as regular expression for matching */
 
-        std::string name() {
+        std::string name() const {
             return ruleName;
         }
 
-        std::regex regex() {
+        std::regex regex() const {
             return rgx;
+        }
+
+        std::weak_ptr<RuleList> get_nextRules() const {
+            return nextRules;
         }
 
     private:
         std::string ruleName;
-        std::regex rgx;         // holds the regular expression (regex) used to indentify the token
-        //RuleList* subrules;     // holds rules to identify sub tokens
+        std::regex rgx;                     // holds the regular expression (regex) used to indentify the token
+        std::weak_ptr<RuleList> nextRules;  // points to (but does not own) the next rules to be used for tokenization
         //std::regex endrgx;      // for tokens special tokens that use one regex to identify the start and another one
                                 //   to identify the end
 };
@@ -112,6 +120,10 @@ class Token {
                 return match.str();
         }
 
+        Rule get_rule() const {
+            return rule;
+        }
+
     // friends:
     template<class RandomAccessIterator>
     friend Token firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset);
@@ -128,6 +140,10 @@ class Token {
 
 /*
 A class representing a lexcical analyses grammar.
+
+All tokenization rules are held in a `std::vector` of `RuleList`s.  The first `RuleList` is the main/starting tokenization
+rule list used when analyzing text.  The other tokenization rules are those pointed to by the `nextRules` member of the
+matched tokenization rule.
 */
 class Grammar {
     public:
@@ -156,7 +172,7 @@ class Grammar {
     private:
         //std::string grammerFilePath;// holds the path to the grammar file
         std::string langName;       // stores the name of the current language grammer
-        RuleList rules;             // holds all tokenization rules
+        std::vector<std::shared_ptr<RuleList>> rules; // holds all tokenization rules
 };
 
 
@@ -167,7 +183,7 @@ class Grammar {
 - returns the first token identified using `rules`
 - `first` is an iterator (prefer const_iterator) pointing to the first character of the text to be analyzed
 - `last` is an iterator (prefer const_iterator) pointing to one character past the end of the text to be analyzed
-- `offset` is the offset from the start of the string to at which to begin looking for a token
+- `offset` is the offset from the start of the string at which to begin looking for a token
 */
 template<class RandomAccessIterator>
 Token firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset) {
