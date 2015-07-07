@@ -4,8 +4,9 @@ CXXFLAGS	= -Wall -std=c++14
 AR			= ar
 
 # prerequisite files
-HEADERS		= include/ogla/ogla.hpp
-SOURCES		= src/ogla.cpp
+HEADERS		= include/ogla/ogla.hpp include/ogla/token.hpp include/ogla/grammar.hpp
+#SOURCES		= src/ogla.cpp src/token.cpp src/grammar.cpp
+SOURCES		= src/token.cpp src/grammar.cpp
 OBJS		= $(subst src,bin,$(subst .cpp,.o,$(SOURCES)))
 
 

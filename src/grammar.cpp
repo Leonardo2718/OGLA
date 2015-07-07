@@ -1,16 +1,14 @@
 /*
 Project: OGLA
-File: ogla.cpp
+File: grammar.cpp
 Author: Leonardo Banderali
-Created: March 07, 2015
+Created: July 7, 2015
 Last Modified: July 7, 2015
 
 Description:
-    OGLA is generic lexical analyzer intended for quick and fast integration into
-    any type of project requiring a lexer.  The main goal of this library is to
-    provided an easy to use generic lexer for use in proof-of-concepts and other
-    small projects.  It is not intended for use in time sensitive or highly
-    optimized applications.
+    A `Grammar` is a set of `ogla::Rule`s that collectively define a "language".  This grammar can be used to analyze
+    text.  Once analyzed, text is broken up into identified tokens.  For the sake of making the algorithms generic, if
+    a text item is not identified as a token, it is simply discarded.
 
 Copyright (C) 2015 Leonardo Banderali
 Distributed under the Boost Software License, Version 1.0.
@@ -18,24 +16,15 @@ Distributed under the Boost Software License, Version 1.0.
 
 */
 
-//#include "../include/ogla/ogla.hpp"
+// library header
+#include "../include/ogla/grammar.hpp"
 
-//include standard c++ libraries
+//standard c++ libraries
 #include <algorithm>
 
 
 
 //~function implementations~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-/*
-- returns the first token identified using `rules`
-- `text` is the text to be analyzed
-- `offset` is the offset from the start of the string to at which to begin looking for a token
-*/
-/*ogla::Token ogla::firstToken(const std::string& text, const RuleList& rules, const int offset) {
-    return firstToken(text.begin(), text.end(), rules, offset);
-}*/
-
 /*
 returns a list of tokens representing `text` tokenized using `grammar`
 */

@@ -1,16 +1,13 @@
 /*
 Project: OGLA
-File: ogla.hpp
+File: token.hpp
 Author: Leonardo Banderali
-Created: March 07, 2015
+Created: July 7, 2015
 Last Modified: July 7, 2015
 
 Description:
-    OGLA is generic lexical analyzer intended for quick and fast integration into
-    any type of project requiring a lexer.  The main goal of this library is to
-    provided an easy to use generic lexer for use in proof-of-concepts and other
-    small projects.  It is not intended for use in time sensitive or highly
-    optimized applications.
+    A `Token` is a unit of analyzed text and is identified using a `Rule`.  These form the basic building blocks of the
+    OGLA lexcial analyzer.
 
 Copyright (C) 2015 Leonardo Banderali
 Distributed under the Boost Software License, Version 1.0.
@@ -18,42 +15,33 @@ Distributed under the Boost Software License, Version 1.0.
 
 */
 
-#ifndef OGLA_HPP
-#define OGLA_HPP
-
-#include "token.hpp"
-#include "grammar.hpp"
+#ifndef OGLA_TOKEN_HPP
+#define OGLA_TOKEN_HPP
 
 //include standard c++ libraries
-/*#include <string>
+#include <string>
 #include <vector>
 #include <regex>
-#include <memory>*/
+#include <memory>
 
-
-
-//namespace ogla {
+namespace ogla {
 
 //~forward declarations and function prototypes~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-/*class Rule;     // type for describing a rule used to identify a token
+class Rule;     // type for describing a rule used to identify a token
 using RuleList = std::vector<Rule>;
 class Token;    // type representing a token in analyzed text
 using TokenList = std::vector<Token>;
-class Grammar;  // type representing a lexcical analyses grammar
 
 template<class RandomAccessIterator>
 Token firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset = 0);
-Token firstToken(const std::string& text, const RuleList& rules, const int offset = 0);*/
+Token firstToken(const std::string& text, const RuleList& rules, const int offset = 0);
 /*  - returns the first token identified using `rules`
     - `first` is an iterator (prefer const_iterator) pointing to the first character of the text to be analyzed
     - `last` is an iterator (prefer const_iterator) pointing to one character past the end of the text to be analyzed
     - `text` is the text to be analyzed
     - `offset` is the offset from the start of the string at which to begin looking for a token
 */
-
-//TokenList analyze(const std::string& text, const Grammar& grammar);
-/*  returns a list of tokens representing `text` tokenized using `grammar` */
 
 
 
@@ -62,14 +50,14 @@ Token firstToken(const std::string& text, const RuleList& rules, const int offse
 /*
 A class for describing a rule used to identify a token (tokenization rule).
 */
-/*class Rule {
+class Rule {
     public:
         Rule() {}
         Rule(const std::string& _name, const std::string& _regex)
             : ruleName{_name}, rgx{_regex} {}
         Rule(const std::string& _name, const std::string& _regex, std::weak_ptr<RuleList> _nextRules)
             : ruleName{_name}, rgx{_regex}, nextRules{_nextRules} {}
-        /*  constructs a rule with the name `_name` and uses `_regex` as regular expression for matching *
+        /*  constructs a rule with the name `_name` and uses `_regex` as regular expression for matching */
 
         std::string name() const {
             return ruleName;
@@ -89,12 +77,9 @@ A class for describing a rule used to identify a token (tokenization rule).
         std::weak_ptr<RuleList> nextRules;  // points to (but does not own) the next rules to be used for tokenization
         //std::regex endrgx;      // for tokens special tokens that use one regex to identify the start and another one
                                 //   to identify the end
-};*/
+};
 
-/*
-A class for representing a token in analyzed text.
-*/
-/*class Token {
+class Token {
     public:
         Token() : offset{0} {}
 
@@ -138,46 +123,34 @@ A class for representing a token in analyzed text.
         int offset;         // holds the offset for the token position
 
         Token(Rule r, std::smatch m, int _offset = 0) : rule{r}, match{m}, offset{_offset} {}
-        *  private constructor that creates a token *
+        /*  private constructor that creates a token */
 };
 
+
+
+//~function implementations~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 /*
-A class representing a lexcical analyses grammar.
-
-All tokenization rules are held in a `std::vector` of `RuleList`s.  The first `RuleList` is the main/starting tokenization
-rule list used when analyzing text.  The other tokenization rules are those pointed to by the `nextRules` member of the
-matched tokenization rule.
+- returns the first token identified using `rules`
+- `first` is an iterator (prefer const_iterator) pointing to the first character of the text to be analyzed
+- `last` is an iterator (prefer const_iterator) pointing to one character past the end of the text to be analyzed
+- `offset` is the offset from the start of the string at which to begin looking for a token
 */
-/*class Grammar {
-    public:
-        // static functions
-
-        static Grammar load();
-        /*  loads the default grammar used to load other grammars *
-
-        static Grammar load(std::istream& input);
-        /*  loads the language grammar defined by the content in the `input` stream *
-
-        static Grammar load(const std::string& filePath);
-        /*  loads the language grammar defined in the file with path `filePath` *
-
-        // getters and setters
-
-        std::string name() {
-            return langName;
+template<class RandomAccessIterator>
+Token firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset) {
+    Token t;
+    if (first + offset < last) {
+        std::smatch m;
+        for (auto r: rules) {
+            if (std::regex_search(first + offset, last, m, r.regex()) && (m.position() + offset < t.position() || t.position() < 0)) {
+                t = Token(r, m, offset);
+            }
         }
+    }
 
-    // friends:
-    friend TokenList analyze(const std::string& text, const Grammar& grammar);
+    return t;
+}
 
-    protected:
+}   // `ogla` namepsace
 
-    private:
-        //std::string grammerFilePath;// holds the path to the grammar file
-        std::string langName;       // stores the name of the current language grammer
-        std::vector<std::shared_ptr<RuleList>> rules; // holds all tokenization rules
-};*/
-
-//}   // namespace ogla
-
-#endif  //OGLA_HPP
+#endif//OGLA_TOKEN_HPP
