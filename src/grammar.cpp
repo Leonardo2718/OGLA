@@ -31,16 +31,6 @@ returns a list of tokens representing `text` tokenized using `grammar`
 ogla::TokenList ogla::analyze(const std::string& text, const Grammar& grammar) {
     TokenList tl;   // token list to be returned
 
-    /*int p = 0;
-    while (true) {
-        Token t = firstToken(text, grammar.rules, p);   // should call move constructor
-
-        if (t.position() < 0)
-            break;
-
-        p = t.position() + t.length();
-        tl.push_back(t);
-    }*/
     int p = 0;
     std::shared_ptr<RuleList> rules = grammar.rules.at(0);
     while(rules) {

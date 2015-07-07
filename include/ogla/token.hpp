@@ -75,8 +75,6 @@ class Rule {
         std::string ruleName;
         std::regex rgx;                     // holds the regular expression (regex) used to indentify the token
         std::weak_ptr<RuleList> nextRules;  // points to (but does not own) the next rules to be used for tokenization
-        //std::regex endrgx;      // for tokens special tokens that use one regex to identify the start and another one
-                                //   to identify the end
 };
 
 class Token {
