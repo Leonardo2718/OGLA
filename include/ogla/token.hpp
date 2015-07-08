@@ -7,7 +7,7 @@ Last Modified: July 7, 2015
 
 Description:
     A `Token` is a unit of analyzed text and is identified using a `Rule`.  These form the basic building blocks of the
-    OGLA lexcial analyzer.
+    OGLA lexcial analyzer.  Tokens should be immutable as they represent the result of a computation (lexical analysis).
 
 Copyright (C) 2015 Leonardo Banderali
 Distributed under the Boost Software License, Version 1.0.
@@ -59,17 +59,11 @@ class Rule {
             : ruleName{_name}, rgx{_regex}, nextRules{_nextRules} {}
         /*  constructs a rule with the name `_name` and uses `_regex` as regular expression for matching */
 
-        std::string name() const {
-            return ruleName;
-        }
+        std::string name() const;
 
-        std::regex regex() const {
-            return rgx;
-        }
+        std::regex regex() const;
 
-        std::weak_ptr<RuleList> get_nextRules() const {
-            return nextRules;
-        }
+        std::weak_ptr<RuleList> get_nextRules() const;
 
     private:
         std::string ruleName;
@@ -81,34 +75,15 @@ class Token {
     public:
         Token() : offset{0} {}
 
-        std::string name() {
-            return rule.name();
-        }
+        std::string name();
 
-        int position() const {
-            if (match.empty())
-                return -1;
-            else
-                return match.position() + offset;
-        }
+        int position() const;
 
-        int length() const {
-            if (match.empty())
-                return -1;
-            else
-                return match.length();
-        }
+        int length() const;
 
-        std::string lexeme() const {
-            if (match.empty())
-                return std::string();
-            else
-                return match.str();
-        }
+        std::string lexeme() const;
 
-        Rule get_rule() const {
-            return rule;
-        }
+        Rule get_rule() const;
 
     // friends:
     template<class RandomAccessIterator>
