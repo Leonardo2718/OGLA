@@ -3,7 +3,7 @@ Project: OGLA
 File: token.hpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: July 7, 2015
+Last Modified: July 8, 2015
 
 Description:
     A `Token` is a unit of analyzed text and is identified using a `Rule`.  These form the basic building blocks of the
@@ -32,14 +32,16 @@ class Rule;     // type for describing a rule used to identify a token
 using RuleList = std::vector<Rule>;
 class Token;    // type representing a token in analyzed text
 using TokenList = std::vector<Token>;
+struct TokenRulePair;
 
 template<class RandomAccessIterator>
-Token firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset = 0);
-Token firstToken(const std::string& text, const RuleList& rules, const int offset = 0);
-/*  - returns the first token identified using `rules`
+TokenRulePair firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset = 0);
+TokenRulePair firstToken(const std::string& text, const RuleList& rules, const int offset = 0);
+/*  - returns the first token identified and its corresponding rule
     - `first` is an iterator (prefer const_iterator) pointing to the first character of the text to be analyzed
     - `last` is an iterator (prefer const_iterator) pointing to one character past the end of the text to be analyzed
     - `text` is the text to be analyzed
+    - `rules` is the list of rules checked when looking for the first token
     - `offset` is the offset from the start of the string at which to begin looking for a token
 */
 
@@ -75,7 +77,7 @@ class Token {
     public:
         Token() : offset{0} {}
 
-        std::string name();
+        std::string name() const;
 
         int position() const;
 
@@ -87,16 +89,22 @@ class Token {
 
     // friends:
     template<class RandomAccessIterator>
-    friend Token firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset);
-    friend Token firstToken(const std::string& text, const RuleList& rules, const int offset);
+    friend TokenRulePair firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset);
+    //friend TokenRulePair firstToken(const std::string& text, const RuleList& rules, const int offset);
 
     private:
         Rule rule;          // holds the rule used to match the token
+        std::string ruleName;
         std::smatch match;  // holds the lexem matched associated with the token
         int offset;         // holds the offset for the token position
 
-        Token(Rule r, std::smatch m, int _offset = 0) : rule{r}, match{m}, offset{_offset} {}
+        Token(Rule r, std::smatch m, int _offset = 0) : rule{r}, ruleName{r.name()}, match{m}, offset{_offset} {}
         /*  private constructor that creates a token */
+};
+
+struct TokenRulePair {
+    Token token;
+    Rule rule;
 };
 
 
@@ -104,25 +112,32 @@ class Token {
 //~function implementations~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /*
-- returns the first token identified using `rules`
+- returns the first token identified and its corresponding rule
 - `first` is an iterator (prefer const_iterator) pointing to the first character of the text to be analyzed
 - `last` is an iterator (prefer const_iterator) pointing to one character past the end of the text to be analyzed
+- `rules` is the list of rules checked when looking for the first token
 - `offset` is the offset from the start of the string at which to begin looking for a token
 */
 template<class RandomAccessIterator>
-Token firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset) {
-    Token t;
+TokenRulePair firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset) {
+    Token token;
+    Rule rule;
     if (first + offset < last) {
         std::smatch m;
         for (auto r: rules) {
-            if (std::regex_search(first + offset, last, m, r.regex()) && (m.position() + offset < t.position() || t.position() < 0)) {
-                t = Token(r, m, offset);
+            if (std::regex_search(first + offset, last, m, r.regex()) && (m.position() + offset < token.position() || token.position() < 0)) {
+                token = Token(r, m, offset);
+                rule = r;
             }
         }
     }
 
-    return t;
+    return TokenRulePair{token, rule};
 }
+
+/*TokenRulePair firstToken(const std::string& text, const RuleList& rules, const int offset) {
+    return firstToken(text.begin(), text.end(), rules, offset);
+}*/
 
 }   // `ogla` namepsace
 

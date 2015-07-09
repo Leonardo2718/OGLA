@@ -4,7 +4,7 @@ CXXFLAGS	= -Wall -std=c++14
 AR			= ar
 
 # prerequisite files
-HEADERS		= include/ogla/ogla.hpp include/ogla/token.hpp include/ogla/grammar.hpp
+HEADERS		= include/ogla/token.hpp include/ogla/grammar.hpp
 SOURCES		= src/token.cpp src/grammar.cpp
 OBJS		= $(subst src,bin,$(subst .cpp,.o,$(SOURCES)))
 
@@ -20,7 +20,7 @@ OBJS		= $(subst src,bin,$(subst .cpp,.o,$(SOURCES)))
 # Make rules
 
 ogla.a: $(OBJS)
-	$(AR) rvs "$@" $(OBJS)
+	$(AR) rcvs "$@" $(OBJS)
 
 bin/%.o: src/%.cpp $(HEADERS) Makefile
 	$(CXX) $(CXXFLAGS) -c "$<" -o "$@"

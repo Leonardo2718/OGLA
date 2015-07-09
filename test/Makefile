@@ -11,5 +11,4 @@ ARCHIVES	= ../ogla.a /lib/libboost_unit_test_framework.a
 all: test_firsttoken test_analyze
 
 test_%: test_%.cpp $(HEADERS) $(ARCHIVES) Makefile
-	$(CXX) $(CXXFLAGS) "$<" $(ARCHIVES)  -o "$@"
-#/lib/libboost_unit_test_framework.a
+	$(CXX) $(CXXFLAGS) "$<" $(ARCHIVES) -o "$@"

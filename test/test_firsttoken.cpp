@@ -3,7 +3,7 @@ Project: OGLA
 File: test_firsttoken.cpp
 Author: Leonardo Banderali
 Created: June 27, 2015
-Last Modified: June 30, 2015
+Last Modified: July 8, 2015
 
 Description: A simple unit test for `ogla::firstToken()`.
 
@@ -28,14 +28,14 @@ BOOST_AUTO_TEST_CASE( test_firsttoken ) {
     ogla::RuleList rules{rule1, rule2};
 
     // pre-test code
-    ogla::Token token1 = ogla::firstToken(text, rules);
-    ogla::Token token2 = ogla::firstToken(text.cbegin(), text.cend(), rules, 5);
+    ogla::TokenRulePair token1 = ogla::firstToken(text, rules);
+    ogla::TokenRulePair token2 = ogla::firstToken(text.cbegin(), text.cend(), rules, 5);
 
     // run tests
-    BOOST_CHECK_EQUAL( token1.name(), std::string("rule_1") );
-    BOOST_CHECK_EQUAL( token2.name(), std::string("rule_2") );
-    BOOST_CHECK_EQUAL( token1.lexeme(), std::string("quick") );
-    BOOST_CHECK_EQUAL( token2.lexeme(), std::string("jumps") );
-    BOOST_CHECK_EQUAL( token1.position(), 4 );
-    BOOST_CHECK_EQUAL( token2.position(), 20 );
+    BOOST_CHECK_EQUAL( token1.token.name(), std::string("rule_1") );
+    BOOST_CHECK_EQUAL( token2.token.name(), std::string("rule_2") );
+    BOOST_CHECK_EQUAL( token1.token.lexeme(), std::string("quick") );
+    BOOST_CHECK_EQUAL( token2.token.lexeme(), std::string("jumps") );
+    BOOST_CHECK_EQUAL( token1.token.position(), 4 );
+    BOOST_CHECK_EQUAL( token2.token.position(), 20 );
 }

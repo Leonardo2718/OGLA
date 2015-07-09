@@ -3,7 +3,7 @@ Project: OGLA
 File: token.cpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: July 7, 2015
+Last Modified: July 8, 2015
 
 Description:
     A `Token` is a unit of analyzed text and is identified using a `Rule`.  These form the basic building blocks of the
@@ -23,11 +23,12 @@ Distributed under the Boost Software License, Version 1.0.
 //~function implementations~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /*
-- returns the first token identified using `rules`
+- returns the first token identified and its corresponding rule
 - `text` is the text to be analyzed
+- `rules` is the list of rules checked when looking for the first token
 - `offset` is the offset from the start of the string to at which to begin looking for a token
 */
-ogla::Token ogla::firstToken(const std::string& text, const RuleList& rules, const int offset) {
+ogla::TokenRulePair ogla::firstToken(const std::string& text, const RuleList& rules, const int offset) {
     return firstToken(text.begin(), text.end(), rules, offset);
 }
 
@@ -50,6 +51,10 @@ std::weak_ptr<ogla::RuleList> ogla::Rule::get_nextRules() const {
 
 
 //~`Token` public functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+std::string ogla::Token::name() const {
+    return ruleName;
+}
 
 int ogla::Token::position() const {
     if (match.empty())
