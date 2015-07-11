@@ -3,7 +3,7 @@ Project: OGLA
 File: token.hpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: July 8, 2015
+Last Modified: July 10, 2015
 
 Description:
     A `Token` is a unit of analyzed text and is identified using a `Rule`.  These form the basic building blocks of the
@@ -67,6 +67,10 @@ class Rule {
 
         std::weak_ptr<RuleList> get_nextRules() const;
 
+        bool operator==(const Rule& other);
+
+        bool operator!=(const Rule& other);
+
     private:
         std::string ruleName;
         std::regex rgx;                     // holds the regular expression (regex) used to indentify the token
@@ -86,6 +90,10 @@ class Token {
         std::string lexeme() const;
 
         Rule get_rule() const;
+
+        bool operator==(const Token& other);
+
+        bool operator!=(const Token& other);
 
     // friends:
     template<class RandomAccessIterator>
