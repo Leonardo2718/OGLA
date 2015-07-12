@@ -3,7 +3,7 @@ Project: OGLA
 File: grammar.hpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: July 10, 2015
+Last Modified: July 11, 2015
 
 Description:
     A `Grammar` is a set of `ogla::Rule`s that collectively define a "language".  This grammar can be used to analyze
@@ -93,40 +93,45 @@ A class representing a token iterator where each token is generated on-the-fly b
 */
 class StepAnalyzer {
     public:
-        StepAnalyzer();
+        StepAnalyzer() : current_pos{0} {}
+        StepAnalyzer(const std::string& _text, const Grammar& _grammar)
+        : grammar{_grammar}, text_begin{_text.cbegin()}, text_end{_text.cend()}, current_pos{0},
+        currentRules{_grammar.rules.at(0)} {
+            operator++();
+        }
 
-        TokenRulePair& operator*() {
+        TokenRulePair& operator*() const {
             return currentToken;
         }
 
-        TokenRulePair& operator->() {
-            return currentToken;
+        TokenRulePair* operator->() {
+            return &currentToken;
         }
 
         StepAnalyzer& operator++() {
-            current_itr += currentToken.token.length();
-            currentToken = firstToken(text_begin, text_end, *currentRules, current_itr - text_begin);
+            current_pos = currentToken.token.position() + currentToken.token.length();
+            currentToken = firstToken(text_begin, text_end, *currentRules, current_pos);
             currentRules = currentToken.rule.get_nextRules().lock();
             return *this;
         }
 
         StepAnalyzer& operator++(int) {
             auto old = this;
-            current_itr += currentToken.token.length();
-            currentToken = firstToken(text_begin, text_end, *currentRules, current_itr - text_begin);
+            current_pos = currentToken.token.position() + currentToken.token.length();
+            currentToken = firstToken(text_begin, text_end, *currentRules, current_pos);
             currentRules = currentToken.rule.get_nextRules().lock();
             return *old;
         }
 
-        bool operator==(const StepAnalyzer& other) {
-            return text_begin == other.text_begin &&
-                   text_end == other.text_end &&
-                   current_itr == other.current_itr &&
-                   //currentToken == other.currentToken &&
-                   grammar == other.grammar;
+        bool operator==(const StepAnalyzer& other) const {
+            return //text_begin == other.text_begin &&
+                   //text_end == other.text_end &&
+                   //current_itr == other.current_itr;// &&
+                   currentToken.token == other.currentToken.token;// &&
+                   //grammar == other.grammar;
         }
 
-        bool operator!=(const StepAnalyzer& other) {
+        bool operator!=(const StepAnalyzer& other) const {
             return !(*this == other);
         }
 
@@ -136,15 +141,11 @@ class StepAnalyzer {
     private:
         using text_itr = decltype(std::declval<std::string>().cbegin());
 
-        StepAnalyzer(const std::string& _text, const Grammar& _grammar)
-        : grammar{_grammar}, text_begin{_text.cbegin()}, text_end{_text.cend()}, current_itr{_text.cbegin()},
-        currentRules{_grammar.rules.at(0)} {}
-
         Grammar grammar;
 
         const text_itr text_begin;
         const text_itr text_end;
-        text_itr current_itr;
+        unsigned int current_pos;
 
         TokenRulePair currentToken;
         std::shared_ptr<RuleList> currentRules;
