@@ -48,13 +48,13 @@ std::weak_ptr<ogla::RuleList> ogla::Rule::get_nextRules() const {
     return nextRules;
 }
 
-bool ogla::Rule::operator==(const Rule& other) {
+bool ogla::Rule::operator==(const Rule& other) const {
     return ruleName == other.ruleName;// &&
            //rgx == other.rgx;// &&
            //nextRules == other.nextRules;
 }
 
-bool ogla::Rule::operator!=(const Rule& other) {
+bool ogla::Rule::operator!=(const Rule& other) const {
     return !(*this == other);
 }
 
@@ -91,12 +91,12 @@ ogla::Rule ogla::Token::get_rule() const {
     return rule;
 }
 
-bool ogla::Token::operator==(const Token& other) {
+bool ogla::Token::operator==(const Token& other) const {
     return ruleName == other.ruleName &&
            match == other.match &&
            offset == other.offset;
 }
 
-bool ogla::Token::operator!=(const Token& other) {
+bool ogla::Token::operator!=(const Token& other) const {
     return !(*this == other);
 }

@@ -67,9 +67,9 @@ class Rule {
 
         std::weak_ptr<RuleList> get_nextRules() const;
 
-        bool operator==(const Rule& other);
+        bool operator==(const Rule& other) const;
 
-        bool operator!=(const Rule& other);
+        bool operator!=(const Rule& other) const;
 
     private:
         std::string ruleName;
@@ -91,9 +91,9 @@ class Token {
 
         Rule get_rule() const;
 
-        bool operator==(const Token& other);
+        bool operator==(const Token& other) const;
 
-        bool operator!=(const Token& other);
+        bool operator!=(const Token& other) const;
 
     // friends:
     template<class RandomAccessIterator>

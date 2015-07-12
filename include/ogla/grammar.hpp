@@ -85,7 +85,7 @@ class Grammar {
     private:
         //std::string grammerFilePath;// holds the path to the grammar file
         std::string langName;       // stores the name of the current language grammer
-        std::vector<std::shared_ptr<RuleList>> rules; // holds all tokenization rules
+        std::vector<std::shared_ptr<RuleList>> rules;   // holds all tokenization rules
 };
 
 /*
@@ -100,7 +100,7 @@ class StepAnalyzer {
             operator++();
         }
 
-        TokenRulePair& operator*() const {
+        TokenRulePair& operator*() {
             return currentToken;
         }
 
@@ -110,16 +110,16 @@ class StepAnalyzer {
 
         StepAnalyzer& operator++() {
             current_pos = currentToken.token.position() + currentToken.token.length();
-            currentToken = firstToken(text_begin, text_end, *currentRules, current_pos);
-            currentRules = currentToken.rule.get_nextRules().lock();
+            currentToken = firstToken(text_begin, text_end, *currentRules.lock(), current_pos);
+            currentRules = currentToken.rule.get_nextRules();
             return *this;
         }
 
         StepAnalyzer& operator++(int) {
             auto old = this;
             current_pos = currentToken.token.position() + currentToken.token.length();
-            currentToken = firstToken(text_begin, text_end, *currentRules, current_pos);
-            currentRules = currentToken.rule.get_nextRules().lock();
+            currentToken = firstToken(text_begin, text_end, *currentRules.lock(), current_pos);
+            currentRules = currentToken.rule.get_nextRules();
             return *old;
         }
 
@@ -148,7 +148,7 @@ class StepAnalyzer {
         unsigned int current_pos;
 
         TokenRulePair currentToken;
-        std::shared_ptr<RuleList> currentRules;
+        std::weak_ptr<RuleList> currentRules;
 };
 
 }   // `ogla` namespace

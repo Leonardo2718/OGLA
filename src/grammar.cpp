@@ -32,7 +32,7 @@ ogla::TokenList ogla::analyze(const std::string& text, const Grammar& grammar) {
     TokenList tl;   // token list to be returned
 
     int p = 0;
-    std::shared_ptr<RuleList> rules = grammar.rules.at(0);
+    auto rules = grammar.rules.at(0);
     while(rules) {
         TokenRulePair trp = firstToken(text, *rules, p);    // should call move constructor
 
@@ -71,17 +71,19 @@ ogla::Grammar ogla::Grammar::load() {
     //*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     //$ This grammar is only used for testing purposes and does not $$
     //$ represent anything useful.
-    g.rules.push_back(std::make_shared<RuleList>(RuleList{}));
-    std::shared_ptr<RuleList> rlist = g.rules.at(0);
-    rlist->push_back(Rule("foo_rule", "foo", rlist));
-    rlist->push_back(Rule("bar_rule", "\\bbar\\b", rlist));
-    rlist->push_back(Rule("quux_rule", "\\bqu+x\\b", rlist));
-    rlist->push_back(Rule("quick_rule", "\\bquick\\b", rlist));
-    rlist->push_back(Rule("c_rule", "\\b[A-Za-z]+c[A-Za-z]+\\b", rlist));
+    //g.rules.push_back(RuleList{});
+    //auto rlist = g.rules.at(0);
+    auto rlist = std::make_shared<RuleList>(RuleList{});
+    g.rules.push_back(rlist);
+    rlist->push_back(Rule{"foo_rule", "foo", rlist });
+    rlist->push_back(Rule{"bar_rule", "\\bbar\\b", rlist});
+    rlist->push_back(Rule{"quux_rule", "\\bqu+x\\b", rlist});
+    rlist->push_back(Rule{"quick_rule", "\\bquick\\b", rlist});
+    rlist->push_back(Rule{"c_rule", "\\b[A-Za-z]+c[A-Za-z]+\\b", rlist});
 
     // define rules for a basic string token
-    g.rules.push_back(std::make_shared<RuleList>(RuleList{}));
-    auto rs = g.rules.back();
+    auto rs = std::make_shared<RuleList>(RuleList{});
+    g.rules.push_back(rs);
     rs->push_back(Rule{"escape_rule", "\\\\.", rs});
     rs->push_back(Rule{"end_str_rule", "\"", rlist});
     rlist->push_back(Rule{"str_rule", "\"", rs});
