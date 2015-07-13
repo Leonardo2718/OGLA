@@ -3,7 +3,7 @@ Project: OGLA
 File: ogla.hpp
 Author: Leonardo Banderali
 Created: March 07, 2015
-Last Modified: July 7, 2015
+Last Modified: July 12, 2015
 
 Description:
     OGLA is generic lexical analyzer intended for quick and fast integration into
@@ -23,5 +23,6 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include "token.hpp"
 #include "grammar.hpp"
+#include "analyzers.hpp"
 
 #endif  //OGLA_HPP

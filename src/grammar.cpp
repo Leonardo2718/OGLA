@@ -24,34 +24,6 @@ Distributed under the Boost Software License, Version 1.0.
 
 
 
-//~function implementations~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/*
-returns a list of tokens representing `text` tokenized using `grammar`
-*/
-ogla::TokenList ogla::analyze(const std::string& text, const Grammar& grammar) {
-    TokenList tl;   // token list to be returned
-
-    int p = 0;
-    auto rules = grammar.rule_list(0);
-    while(rules) {
-        TokenRulePair trp = firstToken(text, *rules, p);    // should call move constructor
-
-        if (trp.token.position() < 0)
-            break;
-
-        p = trp.token.position() + trp.token.length();
-        tl.push_back(trp.token);
-
-        rules = trp.rule.get_nextRules().lock();
-    }
-
-    return tl;
-}
-
-
-
-//~Grammar class~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 /*  returns a given list of rules indentified by index `n` */
 std::shared_ptr<const ogla::RuleList> ogla::Grammar::rule_list(size_type n) const {
     return rules.at(n);
