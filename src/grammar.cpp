@@ -3,7 +3,7 @@ Project: OGLA
 File: grammar.cpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: July 10, 2015
+Last Modified: July 12, 2015
 
 Description:
     A `Grammar` is a set of `ogla::Rule`s that collectively define a "language".  This grammar can be used to analyze
@@ -32,7 +32,7 @@ ogla::TokenList ogla::analyze(const std::string& text, const Grammar& grammar) {
     TokenList tl;   // token list to be returned
 
     int p = 0;
-    auto rules = grammar.rules.at(0);
+    auto rules = grammar.rule_list(0);
     while(rules) {
         TokenRulePair trp = firstToken(text, *rules, p);    // should call move constructor
 
@@ -51,6 +51,11 @@ ogla::TokenList ogla::analyze(const std::string& text, const Grammar& grammar) {
 
 
 //~Grammar class~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+/*  returns a given list of rules indentified by index `n` */
+std::shared_ptr<const ogla::RuleList> ogla::Grammar::rule_list(size_type n) const {
+    return rules.at(n);
+}
 
 bool ogla::Grammar::operator==(const Grammar& other) {
     return langName == other.langName;// &&

@@ -3,7 +3,7 @@ Project: OGLA
 File: grammar.hpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: July 11, 2015
+Last Modified: July 12, 2015
 
 Description:
     A `Grammar` is a set of `ogla::Rule`s that collectively define a "language".  This grammar can be used to analyze
@@ -39,7 +39,7 @@ class StepAnalyzer;
 TokenList analyze(const std::string& text, const Grammar& grammar);
 /*  returns a list of tokens representing `text` tokenized using `grammar` */
 
-StepAnalyzer make_StepAnalyzer(const std::string& text, const Grammar& grammar);
+//StepAnalyzer make_StepAnalyzer(const std::string& text, const Grammar& grammar);
 /*  return a `StepAnalyzer` for analyzing the `text` using the given `grammar` */
 
 
@@ -55,6 +55,8 @@ matched tokenization rule.
 */
 class Grammar {
     public:
+        using size_type = std::vector<std::shared_ptr<RuleList>>::size_type;
+
         // static functions
 
         static Grammar load();
@@ -72,15 +74,14 @@ class Grammar {
             return langName;
         }
 
+        std::shared_ptr<const RuleList> rule_list(size_type n) const;
+        /*  returns a given list of rules indentified by index `n` */
+
+        // overloaded operator
+
         bool operator==(const Grammar& other);
 
         bool operator!=(const Grammar& other);
-
-    // friends:
-    friend TokenList analyze(const std::string& text, const Grammar& grammar);
-    friend class StepAnalyzer;
-
-    protected:
 
     private:
         //std::string grammerFilePath;// holds the path to the grammar file
@@ -96,7 +97,7 @@ class StepAnalyzer {
         StepAnalyzer() : current_pos{0} {}
         StepAnalyzer(const std::string& _text, const Grammar& _grammar)
         : grammar{_grammar}, text_begin{_text.cbegin()}, text_end{_text.cend()}, current_pos{0},
-        currentRules{_grammar.rules.at(0)} {
+        currentRules{_grammar.rule_list(0)} {
             operator++();
         }
 
@@ -136,7 +137,7 @@ class StepAnalyzer {
         }
 
     //friends:
-        friend StepAnalyzer make_StepAnalyzer(const std::string& text, const Grammar& grammar);
+        //friend StepAnalyzer make_StepAnalyzer(const std::string& text, const Grammar& grammar);
 
     private:
         using text_itr = decltype(std::declval<std::string>().cbegin());
@@ -148,7 +149,7 @@ class StepAnalyzer {
         unsigned int current_pos;
 
         TokenRulePair currentToken;
-        std::weak_ptr<RuleList> currentRules;
+        std::weak_ptr<const RuleList> currentRules;
 };
 
 }   // `ogla` namespace
