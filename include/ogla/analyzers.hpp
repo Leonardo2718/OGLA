@@ -42,47 +42,23 @@ A class representing a token iterator where each token is generated on-the-fly b
 */
 class StepAnalyzer {
     public:
+        // constructors
         StepAnalyzer() : current_pos{0} {}
-        StepAnalyzer(const std::string& _text, const Grammar& _grammar)
-        : grammar{_grammar}, text_begin{_text.cbegin()}, text_end{_text.cend()}, current_pos{0},
-        currentRules{_grammar.rule_list(0)} {
-            operator++();
-        }
+        StepAnalyzer(const std::string& _text, const Grammar& _grammar);
 
-        TokenRulePair& operator*() {
-            return currentToken;
-        }
+        // overloaded operators
 
-        TokenRulePair* operator->() {
-            return &currentToken;
-        }
+        TokenRulePair& operator*();
 
-        StepAnalyzer& operator++() {
-            current_pos = currentToken.token.position() + currentToken.token.length();
-            currentToken = firstToken(text_begin, text_end, *currentRules.lock(), current_pos);
-            currentRules = currentToken.rule.get_nextRules();
-            return *this;
-        }
+        TokenRulePair* operator->();
 
-        StepAnalyzer& operator++(int) {
-            auto old = this;
-            current_pos = currentToken.token.position() + currentToken.token.length();
-            currentToken = firstToken(text_begin, text_end, *currentRules.lock(), current_pos);
-            currentRules = currentToken.rule.get_nextRules();
-            return *old;
-        }
+        StepAnalyzer& operator++();
 
-        bool operator==(const StepAnalyzer& other) const {
-            return //text_begin == other.text_begin &&
-                   //text_end == other.text_end &&
-                   //current_itr == other.current_itr;// &&
-                   currentToken.token == other.currentToken.token;// &&
-                   //grammar == other.grammar;
-        }
+        StepAnalyzer& operator++(int);
 
-        bool operator!=(const StepAnalyzer& other) const {
-            return !(*this == other);
-        }
+        bool operator==(const StepAnalyzer& other) const;
+
+        bool operator!=(const StepAnalyzer& other) const;
 
     //friends:
         //friend StepAnalyzer make_StepAnalyzer(const std::string& text, const Grammar& grammar);

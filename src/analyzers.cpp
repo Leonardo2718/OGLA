@@ -47,3 +47,47 @@ ogla::TokenList ogla::analyze(const std::string& text, const Grammar& grammar) {
 
     return tl;
 }
+
+
+
+//~`stepAnalyzer` class definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ogla::StepAnalyzer::StepAnalyzer(const std::string& _text, const Grammar& _grammar)
+: grammar{_grammar}, text_begin{_text.cbegin()}, text_end{_text.cend()}, current_pos{0}, currentRules{_grammar.rule_list(0)} {
+    operator++();
+}
+
+ogla::TokenRulePair& ogla::StepAnalyzer::operator*() {
+    return currentToken;
+}
+
+ogla::TokenRulePair* ogla::StepAnalyzer::operator->() {
+    return &currentToken;
+}
+
+ogla::StepAnalyzer& ogla::StepAnalyzer::operator++() {
+    current_pos = currentToken.token.position() + currentToken.token.length();
+    currentToken = firstToken(text_begin, text_end, *currentRules.lock(), current_pos);
+    currentRules = currentToken.rule.get_nextRules();
+    return *this;
+}
+
+ogla::StepAnalyzer& ogla::StepAnalyzer::operator++(int) {
+    auto old = this;
+    current_pos = currentToken.token.position() + currentToken.token.length();
+    currentToken = firstToken(text_begin, text_end, *currentRules.lock(), current_pos);
+    currentRules = currentToken.rule.get_nextRules();
+    return *old;
+}
+
+bool ogla::StepAnalyzer::operator==(const StepAnalyzer& other) const {
+    return //text_begin == other.text_begin &&
+           //text_end == other.text_end &&
+           //current_itr == other.current_itr;// &&
+           currentToken.token == other.currentToken.token;// &&
+           //grammar == other.grammar;
+}
+
+bool ogla::StepAnalyzer::operator!=(const StepAnalyzer& other) const {
+    return !(*this == other);
+}
