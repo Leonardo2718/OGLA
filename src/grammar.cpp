@@ -3,7 +3,7 @@ Project: OGLA
 File: grammar.cpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: July 12, 2015
+Last Modified: July 22, 2015
 
 Description:
     A `Grammar` is a set of `ogla::Rule`s that collectively define a "language".  This grammar can be used to analyze
@@ -25,7 +25,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 
 /*  returns a given list of rules indentified by index `n` */
-std::shared_ptr<const ogla::RuleList> ogla::Grammar::rule_list(size_type n) const {
+std::weak_ptr<const ogla::RuleList> ogla::Grammar::rule_list(size_type n) const {
     return rules.at(n);
 }
 

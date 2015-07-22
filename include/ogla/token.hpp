@@ -3,7 +3,7 @@ Project: OGLA
 File: token.hpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: July 10, 2015
+Last Modified: July 22, 2015
 
 Description:
     A `Token` is a unit of analyzed text and is identified using a `Rule`.  These form the basic building blocks of the
@@ -57,7 +57,7 @@ class Rule {
         Rule() {}
         Rule(const std::string& _name, const std::string& _regex)
             : ruleName{_name}, rgx{_regex} {}
-        Rule(const std::string& _name, const std::string& _regex, std::weak_ptr<RuleList> _nextRules)
+        Rule(const std::string& _name, const std::string& _regex, std::weak_ptr<const RuleList> _nextRules)
             : ruleName{_name}, rgx{_regex}, nextRules{_nextRules} {}
         /*  constructs a rule with the name `_name` and uses `_regex` as regular expression for matching */
 
@@ -65,7 +65,7 @@ class Rule {
 
         std::regex regex() const;
 
-        std::weak_ptr<RuleList> get_nextRules() const;
+        std::weak_ptr<const RuleList> get_nextRules() const;
 
         bool operator==(const Rule& other) const;
 
@@ -73,8 +73,8 @@ class Rule {
 
     private:
         std::string ruleName;
-        std::regex rgx;                     // holds the regular expression (regex) used to indentify the token
-        std::weak_ptr<RuleList> nextRules;  // points to (but does not own) the next rules to be used for tokenization
+        std::regex rgx;                             // holds the regular expression (regex) used to indentify the token
+        std::weak_ptr<const RuleList> nextRules;    // points to (but does not own) the next rules to be used for tokenization
 };
 
 class Token {

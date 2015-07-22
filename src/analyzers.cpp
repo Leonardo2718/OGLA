@@ -3,7 +3,7 @@ Project: OGLA
 File: analyzers.cpp
 Author: Leonardo Banderali
 Created: July 12, 2015
-Last Modified: July 12, 2015
+Last Modified: July 22, 2015
 
 Description:
     A `StepAnalyzer` object is a special kind of token iterator.  It points to a token in the analyzed text.  However,
@@ -32,9 +32,9 @@ ogla::TokenList ogla::analyze(const std::string& text, const Grammar& grammar) {
     TokenList tl;   // token list to be returned
 
     int p = 0;
-    auto rules = grammar.rule_list(0);
+    auto rules = grammar.rule_list(0).lock();
     while(rules) {
-        TokenRulePair trp = firstToken(text, *rules, p);    // should call move constructor
+        TokenRulePair trp = firstToken(text, *rules, p);   // should call move constructor
 
         if (trp.token.position() < 0)
             break;

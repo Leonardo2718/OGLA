@@ -3,7 +3,7 @@ Project: OGLA
 File: grammar.hpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: July 12, 2015
+Last Modified: July 22, 2015
 
 Description:
     A `Grammar` is a set of `ogla::Rule`s that collectively define a "language".  This grammar can be used to analyze
@@ -54,7 +54,7 @@ class Grammar {
             return langName;
         }
 
-        std::shared_ptr<const RuleList> rule_list(size_type n) const;
+        std::weak_ptr<const RuleList> rule_list(size_type n) const;
         /*  returns a given list of rules indentified by index `n` */
 
         // overloaded operator
