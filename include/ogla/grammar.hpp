@@ -3,7 +3,7 @@ Project: OGLA
 File: grammar.hpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: July 22, 2015
+Last Modified: July 24, 2015
 
 Description:
     A `Grammar` is a set of `ogla::Rule`s that collectively define a "language".  This grammar can be used to analyze
@@ -56,12 +56,6 @@ class Grammar {
 
         std::weak_ptr<const RuleList> rule_list(size_type n) const;
         /*  returns a given list of rules indentified by index `n` */
-
-        // overloaded operator
-
-        bool operator==(const Grammar& other);
-
-        bool operator!=(const Grammar& other);
 
     private:
         //std::string grammerFilePath;// holds the path to the grammar file

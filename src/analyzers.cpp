@@ -3,7 +3,7 @@ Project: OGLA
 File: analyzers.cpp
 Author: Leonardo Banderali
 Created: July 12, 2015
-Last Modified: July 22, 2015
+Last Modified: July 24, 2015
 
 Description:
     A `StepAnalyzer` object is a special kind of token iterator.  It points to a token in the analyzed text.  However,
@@ -78,16 +78,4 @@ ogla::StepAnalyzer& ogla::StepAnalyzer::operator++(int) {
     currentToken = firstToken(text_begin, text_end, *currentRules.lock(), current_pos);
     currentRules = currentToken.rule.get_nextRules();
     return *old;
-}
-
-bool ogla::StepAnalyzer::operator==(const StepAnalyzer& other) const {
-    return //text_begin == other.text_begin &&
-           //text_end == other.text_end &&
-           //current_itr == other.current_itr;// &&
-           currentToken.token == other.currentToken.token;// &&
-           //grammar == other.grammar;
-}
-
-bool ogla::StepAnalyzer::operator!=(const StepAnalyzer& other) const {
-    return !(*this == other);
 }

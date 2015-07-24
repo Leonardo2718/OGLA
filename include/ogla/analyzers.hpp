@@ -3,7 +3,7 @@ Project: OGLA
 File: analyzers.hpp
 Author: Leonardo Banderali
 Created: July 12, 2015
-Last Modified: July 12, 2015
+Last Modified: July 24, 2015
 
 Description:
     A `StepAnalyzer` object is a special kind of token iterator.  It points to a token in the analyzed text.  However,
@@ -38,7 +38,7 @@ TokenList analyze(const std::string& text, const Grammar& grammar);
 // class declarations
 
 /*
-A class representing a token iterator where each token is generated on-the-fly by analyzing the given text.
+A class representing a token iterator-like object where each token is generated on-the-fly by analyzing the given text.
 */
 class StepAnalyzer {
     public:
@@ -55,10 +55,6 @@ class StepAnalyzer {
         StepAnalyzer& operator++();
 
         StepAnalyzer& operator++(int);
-
-        bool operator==(const StepAnalyzer& other) const;
-
-        bool operator!=(const StepAnalyzer& other) const;
 
     //friends:
         //friend StepAnalyzer make_StepAnalyzer(const std::string& text, const Grammar& grammar);
