@@ -57,6 +57,34 @@ ogla::StepAnalyzer::StepAnalyzer(const std::string& _text, const Grammar& _gramm
     operator++();
 }
 
+/*
+sends the analyzer to `pos` in the text and sets the current rules to `rules`
+*/
+void ogla::StepAnalyzer::jump_to(int pos, std::weak_ptr<const RuleList> rules) {
+    current_pos = pos;
+    currentRules = rules;
+}
+
+/*
+sends the analyzer back to the start of the text
+*/
+void ogla::StepAnalyzer::reset() {
+    currentToken = TokenRulePair{};
+    current_pos = 0;
+    currentRules = grammar.rule_list(0);
+}
+
+/*
+moves to and returns the next token
+*/
+ogla::TokenRulePair ogla::StepAnalyzer::next() {
+    current_pos = currentToken.token.position() + currentToken.token.length();
+    currentToken = firstToken(text_begin, text_end, *currentRules.lock(), current_pos);
+    currentRules = currentToken.rule.get_nextRules();
+    return currentToken;
+}
+
+
 ogla::TokenRulePair& ogla::StepAnalyzer::operator*() {
     return currentToken;
 }

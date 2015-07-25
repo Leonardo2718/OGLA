@@ -30,9 +30,6 @@ namespace ogla {
 TokenList analyze(const std::string& text, const Grammar& grammar);
 /*  returns a list of tokens representing `text` tokenized using `grammar` */
 
-//StepAnalyzer make_StepAnalyzer(const std::string& text, const Grammar& grammar);
-/*  return a `StepAnalyzer` for analyzing the `text` using the given `grammar` */
-
 
 
 // class declarations
@@ -46,6 +43,15 @@ class StepAnalyzer {
         StepAnalyzer() : current_pos{0} {}
         StepAnalyzer(const std::string& _text, const Grammar& _grammar);
 
+        void jump_to(int pos, std::weak_ptr<const RuleList> rules);
+        /*  sends the analyzer to `pos` in the text and sets the current rules to `rules` */
+
+        void reset();
+        /*  sends the analyzer back to the start of the text */
+
+        TokenRulePair next();
+        /*  moves to and returns the next token */
+
         // overloaded operators
 
         TokenRulePair& operator*();
@@ -55,9 +61,6 @@ class StepAnalyzer {
         StepAnalyzer& operator++();
 
         StepAnalyzer& operator++(int);
-
-    //friends:
-        //friend StepAnalyzer make_StepAnalyzer(const std::string& text, const Grammar& grammar);
 
     private:
         using text_itr = decltype(std::declval<std::string>().cbegin());
