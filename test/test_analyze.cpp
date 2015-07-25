@@ -3,7 +3,7 @@ Project: OGLA
 File: test_analyze.cpp
 Author: Leonardo Banderali
 Created: June 28, 2015
-Last Modified: July 12, 2015
+Last Modified: July 24, 2015
 
 Description: A simple unit test for `ogla::firstToken()`.
 
@@ -45,6 +45,30 @@ const std::vector<std::tuple<std::string, int, std::string>> expected_tokens{
 
 
 
+//~helper functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+/*
+Tests for equallity between two values; prints a friendly error message if test fails.
+*/
+template<typename T>
+void eq_test(const T& a, const T& b, const std::string& lable, int index) {
+    BOOST_CHECK_MESSAGE(a == b, "[" << index << "]" << lable << a << ", expected: " << b);
+}
+
+void test_lexeme(const ogla::Token& token, const std::tuple<std::string, int, std::string>& exp, int index) {
+    eq_test(token.lexeme(), std::get<0>(exp), " lexeme: ", index);
+}
+
+void test_position(const ogla::Token& token, const std::tuple<std::string, int, std::string>& exp, int index) {
+    eq_test(token.position(), std::get<1>(exp), " position: ", index);
+}
+
+void test_name(const ogla::Token& token, const std::tuple<std::string, int, std::string>& exp, int index) {
+    eq_test(token.name(), std::get<2>(exp), " name: ", index);
+}
+
+
+
 //~tests~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 BOOST_AUTO_TEST_CASE( test_analyze ) {
@@ -55,17 +79,9 @@ BOOST_AUTO_TEST_CASE( test_analyze ) {
     BOOST_CHECK_MESSAGE(tokens.size() == expected_tokens.size(),
                         "token count: " << tokens.size() << ", expected: " << expected_tokens.size());
     for (int i = 0, s = tokens.size(); i < s; i++) {
-        BOOST_CHECK_MESSAGE(tokens.at(i).lexeme() == std::get<0>(expected_tokens.at(i)),
-                            "[" << i << "]" << " lexem: " << tokens.at(i).lexeme()
-                                            << ", exprected: " << std::get<0>(expected_tokens.at(i)));
-
-        BOOST_CHECK_MESSAGE(tokens.at(i).position() == std::get<1>(expected_tokens.at(i)),
-                            "[" << i << "]" << " position: " << tokens.at(i).position()
-                                            << ", expected: " << std::get<1>(expected_tokens.at(i)));
-
-        BOOST_CHECK_MESSAGE(tokens.at(i).name() == std::get<2>(expected_tokens.at(i)),
-                            "[" << i << "]" << " name: " << tokens.at(i).name()
-                                            << ", expected: " << std::get<2>(expected_tokens.at(i)));
+        test_lexeme(tokens.at(i), expected_tokens.at(i), i);
+        test_position(tokens.at(i), expected_tokens.at(i), i);
+        test_name(tokens.at(i), expected_tokens.at(i), i);
     }
 }
 
@@ -78,16 +94,8 @@ BOOST_AUTO_TEST_CASE( test_analyzer ) {
 
     // run test
     for (int i = 0, s = expected_tokens.size(); i < s; i++, analyzer++) {
-        BOOST_CHECK_MESSAGE(analyzer->token.lexeme() == std::get<0>(expected_tokens.at(i)),
-                            "[" << i << "]" << " lexem: " << analyzer->token.lexeme()
-                                            << ", exprected: " << std::get<0>(expected_tokens.at(i)));
-
-        BOOST_CHECK_MESSAGE(analyzer->token.position() == std::get<1>(expected_tokens.at(i)),
-                            "[" << i << "]" << " position: " << analyzer->token.position()
-                                            << ", expected: " << std::get<1>(expected_tokens.at(i)));
-
-        BOOST_CHECK_MESSAGE(analyzer->token.name() == std::get<2>(expected_tokens.at(i)),
-                            "[" << i << "]" << " name: " << analyzer->token.name()
-                                            << ", expected: " << std::get<2>(expected_tokens.at(i)));
+        test_lexeme(analyzer->token, expected_tokens.at(i), i);
+        test_position(analyzer->token, expected_tokens.at(i), i);
+        test_name(analyzer->token, expected_tokens.at(i), i);
     }
 }
