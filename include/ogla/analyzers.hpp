@@ -3,7 +3,7 @@ Project: OGLA
 File: analyzers.hpp
 Author: Leonardo Banderali
 Created: July 12, 2015
-Last Modified: July 24, 2015
+Last Modified: July 30, 2015
 
 Description:
     A `StepAnalyzer` object is a special kind of token iterator.  It points to a token in the analyzed text.  However,
@@ -71,7 +71,7 @@ class StepAnalyzer {
         const text_itr text_end;
         unsigned int current_pos;
 
-        TokenRulePair currentToken;
+        TokenRulePair currentPair;
         std::weak_ptr<const RuleList> currentRules;
 };
 

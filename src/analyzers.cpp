@@ -3,7 +3,7 @@ Project: OGLA
 File: analyzers.cpp
 Author: Leonardo Banderali
 Created: July 12, 2015
-Last Modified: July 24, 2015
+Last Modified: July 30, 2015
 
 Description:
     A `StepAnalyzer` object is a special kind of token iterator.  It points to a token in the analyzed text.  However,
@@ -69,7 +69,7 @@ void ogla::StepAnalyzer::jump_to(int pos, std::weak_ptr<const RuleList> rules) {
 sends the analyzer back to the start of the text
 */
 void ogla::StepAnalyzer::reset() {
-    currentToken = TokenRulePair{};
+    currentPair = TokenRulePair{};
     current_pos = 0;
     currentRules = grammar.rule_list(0);
 }
@@ -78,32 +78,32 @@ void ogla::StepAnalyzer::reset() {
 moves to and returns the next token
 */
 ogla::TokenRulePair ogla::StepAnalyzer::next() {
-    current_pos = currentToken.token.position() + currentToken.token.length();
-    currentToken = firstToken(text_begin, text_end, *currentRules.lock(), current_pos);
-    currentRules = currentToken.rule.get_nextRules();
-    return currentToken;
+    current_pos = currentPair.token.position() + currentPair.token.length();
+    currentPair = firstToken(text_begin, text_end, *currentRules.lock(), current_pos);
+    currentRules = currentPair.rule.get_nextRules();
+    return currentPair;
 }
 
 
 ogla::TokenRulePair& ogla::StepAnalyzer::operator*() {
-    return currentToken;
+    return currentPair;
 }
 
 ogla::TokenRulePair* ogla::StepAnalyzer::operator->() {
-    return &currentToken;
+    return &currentPair;
 }
 
 ogla::StepAnalyzer& ogla::StepAnalyzer::operator++() {
-    current_pos = currentToken.token.position() + currentToken.token.length();
-    currentToken = firstToken(text_begin, text_end, *currentRules.lock(), current_pos);
-    currentRules = currentToken.rule.get_nextRules();
+    current_pos = currentPair.token.position() + currentPair.token.length();
+    currentPair = firstToken(text_begin, text_end, *currentRules.lock(), current_pos);
+    currentRules = currentPair.rule.get_nextRules();
     return *this;
 }
 
 ogla::StepAnalyzer& ogla::StepAnalyzer::operator++(int) {
     auto old = this;
-    current_pos = currentToken.token.position() + currentToken.token.length();
-    currentToken = firstToken(text_begin, text_end, *currentRules.lock(), current_pos);
-    currentRules = currentToken.rule.get_nextRules();
+    current_pos = currentPair.token.position() + currentPair.token.length();
+    currentPair = firstToken(text_begin, text_end, *currentRules.lock(), current_pos);
+    currentRules = currentPair.rule.get_nextRules();
     return *old;
 }
