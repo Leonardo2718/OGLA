@@ -3,7 +3,7 @@ Project: OGLA
 File: grammar.cpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: July 24, 2015
+Last Modified: August 7, 2015
 
 Description:
     A `Grammar` is a set of `ogla::Rule`s that collectively define a "language".  This grammar can be used to analyze
@@ -17,7 +17,7 @@ Distributed under the Boost Software License, Version 1.0.
 */
 
 // library header
-#include "../include/ogla/grammar.hpp"
+#include "grammar.hpp"
 
 //standard c++ libraries
 #include <algorithm>

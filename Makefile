@@ -1,6 +1,6 @@
 # Ccompiler, tools, and options
 CXX			= g++
-CXXFLAGS	= -Wall -std=c++14
+CXXFLAGS	= -Wall -std=c++14 -iquoteinclude/ogla
 AR			= ar
 
 # prerequisite files

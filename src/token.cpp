@@ -3,7 +3,7 @@ Project: OGLA
 File: token.cpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: July 24, 2015
+Last Modified: August 7, 2015
 
 Description:
     A `Token` is a unit of analyzed text and is identified using a `Rule`.  These form the basic building blocks of the
@@ -16,7 +16,7 @@ Distributed under the Boost Software License, Version 1.0.
 */
 
 // library header
-#include "../include/ogla/token.hpp"
+#include "token.hpp"
 
 
 

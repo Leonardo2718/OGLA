@@ -3,7 +3,7 @@ Project: OGLA
 File: analyzers.cpp
 Author: Leonardo Banderali
 Created: July 12, 2015
-Last Modified: July 30, 2015
+Last Modified: August 7, 2015
 
 Description:
     A `StepAnalyzer` object is a special kind of token iterator.  It points to a token in the analyzed text.  However,
@@ -19,7 +19,7 @@ Distributed under the Boost Software License, Version 1.0.
 */
 
 // library header
-#include "../include/ogla/analyzers.hpp"
+#include "analyzers.hpp"
 
 
 
