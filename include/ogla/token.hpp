@@ -3,7 +3,7 @@ Project: OGLA
 File: token.hpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: July 24, 2015
+Last Modified: August 26, 2015
 
 Description:
     A `Token` is a unit of analyzed text and is identified using a `Rule`.  These form the basic building blocks of the
@@ -28,15 +28,16 @@ namespace ogla {
 
 //~forward declarations and function prototypes~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-class Rule;     // type for describing a rule used to identify a token
-using RuleList = std::vector<Rule>;
-class Token;    // type representing a token in analyzed text
+template <typename NextRulesPointer> class Rule;    // type for describing a rule used to identify a token
+//template <typename NextRulesPointer>
+//using RuleList<NextRulesPointer> = std::vector<Rule<NextRulesPointer>>;
+class Token;                                        // type representing a token in analyzed text
 using TokenList = std::vector<Token>;
 struct TokenRulePair;
 
-template<class RandomAccessIterator>
-TokenRulePair firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset = 0);
-TokenRulePair firstToken(const std::string& text, const RuleList& rules, const int offset = 0);
+//template<class RandomAccessIterator>
+//TokenRulePair firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset = 0);
+//TokenRulePair firstToken(const std::string& text, const RuleList& rules, const int offset = 0);
 /*  - returns the first token identified and its corresponding rule
     - `first` is an iterator (prefer const_iterator) pointing to the first character of the text to be analyzed
     - `last` is an iterator (prefer const_iterator) pointing to one character past the end of the text to be analyzed
@@ -50,14 +51,15 @@ TokenRulePair firstToken(const std::string& text, const RuleList& rules, const i
 //~classes~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /*
-A class for describing a rule used to identify a token (tokenization rule).
+A class template for describing a rule used to identify a token (tokenization rule).
 */
+template <typename NextRulesPointer>
 class Rule {
     public:
-        Rule() {}
-        Rule(const std::string& _name, const std::string& _regex)
-            : ruleName{_name}, rgx{_regex} {}
-        Rule(const std::string& _name, const std::string& _regex, std::weak_ptr<const RuleList> _nextRules)
+        Rule(NextRulesPointer _nextRules) : nextRules{_nextRules} {}
+        /*Rule(const std::string& _name, const std::string& _regex)
+            : ruleName{_name}, rgx{_regex} {}*/
+        Rule(const std::string& _name, const std::string& _regex, NextRulesPointer _nextRules)
             : ruleName{_name}, rgx{_regex}, nextRules{_nextRules} {}
         /*  constructs a rule with the name `_name` and uses `_regex` as regular expression for matching */
 
@@ -65,17 +67,37 @@ class Rule {
 
         std::regex regex() const;
 
-        std::weak_ptr<const RuleList> get_nextRules() const;
+        NextRulesPointer get_nextRules() const;
 
     private:
         std::string ruleName;
         std::regex rgx;                             // holds the regular expression (regex) used to indentify the token
-        std::weak_ptr<const RuleList> nextRules;    // points to (but does not own) the next rules to be used for tokenization
+        //std::weak_ptr<const RuleList> nextRules;    // points to (but does not own) the next rules to be used for tokenization
+        NextRulesPointer nextRules;                 // points to (but does not own) the next rules to be used for tokenization
 };
+
+template <typename NextRulesPointer>
+std::string Rule<NextRulesPointer>::name() const {
+    return ruleName;
+}
+
+template <typename NextRulesPointer>
+std::regex Rule<NextRulesPointer>::regex() const {
+    return rgx;
+}
+
+template <typename NextRulesPointer>
+NextRulesPointer Rule<NextRulesPointer>::get_nextRules() const {
+    return nextRules;
+}
 
 class Token {
     public:
         Token() : offset{0} {}
+        //Token(Rule r, std::smatch m, int _offset = 0) : rule{r}, ruleName{r.name()}, match{m}, offset{_offset} {}
+        Token(const std::string& _ruleName, const std::smatch& _match, int _offset = 0)
+            :ruleName{_ruleName}, match{_match}, offset{_offset} {}
+        /*  constructs a new token */
 
         std::string name() const;
 
@@ -85,31 +107,31 @@ class Token {
 
         std::string lexeme() const;
 
-        Rule get_rule() const;
+        //Rule get_rule() const;
 
         bool operator==(const Token& other) const;
 
         bool operator!=(const Token& other) const;
 
     // friends:
-    template<class RandomAccessIterator>
+    /*template<class RandomAccessIterator>
     friend TokenRulePair firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset);
-    //friend TokenRulePair firstToken(const std::string& text, const RuleList& rules, const int offset);
+    //friend TokenRulePair firstToken(const std::string& text, const RuleList& rules, const int offset);*/
 
     private:
-        Rule rule;          // holds the rule used to match the token
+        //Rule rule;          // holds the rule used to match the token
         std::string ruleName;
         std::smatch match;  // holds the lexem matched associated with the token
         int offset;         // holds the offset for the token position
 
-        Token(Rule r, std::smatch m, int _offset = 0) : rule{r}, ruleName{r.name()}, match{m}, offset{_offset} {}
+        //Token(Rule r, std::smatch m, int _offset = 0) : rule{r}, ruleName{r.name()}, match{m}, offset{_offset} {}
         /*  private constructor that creates a token */
 };
 
-struct TokenRulePair {
+/*struct TokenRulePair {
     Token token;
     Rule rule;
-};
+};*/
 
 
 
@@ -122,7 +144,7 @@ struct TokenRulePair {
 - `rules` is the list of rules checked when looking for the first token
 - `offset` is the offset from the start of the string at which to begin looking for a token
 */
-template<class RandomAccessIterator>
+/*template<class RandomAccessIterator>
 TokenRulePair firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset) {
     Token token;
     Rule rule;
@@ -137,7 +159,7 @@ TokenRulePair firstToken(RandomAccessIterator first, RandomAccessIterator last, 
     }
 
     return TokenRulePair{token, rule};
-}
+}*/
 
 /*TokenRulePair firstToken(const std::string& text, const RuleList& rules, const int offset) {
     return firstToken(text.begin(), text.end(), rules, offset);

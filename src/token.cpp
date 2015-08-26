@@ -3,7 +3,7 @@ Project: OGLA
 File: token.cpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: August 7, 2015
+Last Modified: August 26, 2015
 
 Description:
     A `Token` is a unit of analyzed text and is identified using a `Rule`.  These form the basic building blocks of the
@@ -28,25 +28,9 @@ Distributed under the Boost Software License, Version 1.0.
 - `rules` is the list of rules checked when looking for the first token
 - `offset` is the offset from the start of the string to at which to begin looking for a token
 */
-ogla::TokenRulePair ogla::firstToken(const std::string& text, const RuleList& rules, const int offset) {
+/*ogla::TokenRulePair ogla::firstToken(const std::string& text, const RuleList& rules, const int offset) {
     return firstToken(text.begin(), text.end(), rules, offset);
-}
-
-
-
-//~`Rule` public functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-std::string ogla::Rule::name() const {
-    return ruleName;
-}
-
-std::regex ogla::Rule::regex() const {
-    return rgx;
-}
-
-std::weak_ptr<const ogla::RuleList> ogla::Rule::get_nextRules() const {
-    return nextRules;
-}
+}*/
 
 
 
@@ -77,9 +61,9 @@ std::string ogla::Token::lexeme() const {
         return match.str();
 }
 
-ogla::Rule ogla::Token::get_rule() const {
+/*ogla::Rule ogla::Token::get_rule() const {
     return rule;
-}
+}*/
 
 bool ogla::Token::operator==(const Token& other) const {
     return ruleName == other.ruleName &&
