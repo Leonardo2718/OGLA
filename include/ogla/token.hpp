@@ -28,7 +28,7 @@ namespace ogla {
 
 //~forward declarations and function prototypes~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-template <typename NextRulesPointer> class Rule;    // type for describing a rule used to identify a token
+template <typename NextRulesPointer> class BasicRule;    // type for describing a rule used to identify a token
 //template <typename NextRulesPointer>
 //using RuleList<NextRulesPointer> = std::vector<Rule<NextRulesPointer>>;
 class Token;                                        // type representing a token in analyzed text
@@ -54,12 +54,12 @@ struct TokenRulePair;
 A class template for describing a rule used to identify a token (tokenization rule).
 */
 template <typename NextRulesPointer>
-class Rule {
+class BasicRule {
     public:
-        Rule(NextRulesPointer _nextRules) : nextRules{_nextRules} {}
+        BasicRule(NextRulesPointer _nextRules) : nextRules{_nextRules} {}
         /*Rule(const std::string& _name, const std::string& _regex)
             : ruleName{_name}, rgx{_regex} {}*/
-        Rule(const std::string& _name, const std::string& _regex, NextRulesPointer _nextRules)
+        BasicRule(const std::string& _name, const std::string& _regex, NextRulesPointer _nextRules)
             : ruleName{_name}, rgx{_regex}, nextRules{_nextRules} {}
         /*  constructs a rule with the name `_name` and uses `_regex` as regular expression for matching */
 
@@ -77,17 +77,17 @@ class Rule {
 };
 
 template <typename NextRulesPointer>
-std::string Rule<NextRulesPointer>::name() const {
+std::string BasicRule<NextRulesPointer>::name() const {
     return ruleName;
 }
 
 template <typename NextRulesPointer>
-std::regex Rule<NextRulesPointer>::regex() const {
+std::regex BasicRule<NextRulesPointer>::regex() const {
     return rgx;
 }
 
 template <typename NextRulesPointer>
-NextRulesPointer Rule<NextRulesPointer>::get_nextRules() const {
+NextRulesPointer BasicRule<NextRulesPointer>::get_nextRules() const {
     return nextRules;
 }
 
@@ -130,7 +130,7 @@ class Token {
 
 /*struct TokenRulePair {
     Token token;
-    Rule rule;
+   BasicRule rule;
 };*/
 
 
@@ -145,9 +145,9 @@ class Token {
 - `offset` is the offset from the start of the string at which to begin looking for a token
 */
 /*template<class RandomAccessIterator>
-TokenRulePair firstToken(RandomAccessIterator first, RandomAccessIterator last, const RuleList& rules, const int offset) {
+TokenRulePair firstToken(RandomAccessIterator first, RandomAccessIterator last, constBasicRuleList& rules, const int offset) {
     Token token;
-    Rule rule;
+   BasicRule rule;
     if (first + offset < last) {
         std::smatch m;
         for (auto r: rules) {
