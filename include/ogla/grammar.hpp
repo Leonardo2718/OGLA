@@ -3,7 +3,7 @@ Project: OGLA
 File: grammar.hpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: July 24, 2015
+Last Modified: August 26, 2015
 
 Description:
     A `Grammar` is a set of `ogla::Rule`s that collectively define a "language".  This grammar can be used to analyze
@@ -35,7 +35,9 @@ matched tokenization rule.
 */
 class Grammar {
     public:
-        using size_type = std::vector<std::shared_ptr<RuleList>>::size_type;
+        using RulesListIndex = int;
+        using Rule = BasicRule<RulesListIndex>;
+        using size_type = std::vector<std::vector<Rule>>::size_type;
 
         // static functions
 
@@ -54,13 +56,13 @@ class Grammar {
             return langName;
         }
 
-        std::weak_ptr<const RuleList> rule_list(size_type n) const;
+        const std::vector<Rule>& rule_list(size_type n) const;
         /*  returns a given list of rules indentified by index `n` */
 
     private:
         //std::string grammerFilePath;// holds the path to the grammar file
         std::string langName;       // stores the name of the current language grammer
-        std::vector<std::shared_ptr<RuleList>> rules;   // holds all tokenization rules
+        std::vector<std::vector<Rule>> rules;   // holds all tokenization rules
 };
 
 }   // namespace `ogla`

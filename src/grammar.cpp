@@ -3,7 +3,7 @@ Project: OGLA
 File: grammar.cpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: August 7, 2015
+Last Modified: August 26, 2015
 
 Description:
     A `Grammar` is a set of `ogla::Rule`s that collectively define a "language".  This grammar can be used to analyze
@@ -25,7 +25,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 
 /*  returns a given list of rules indentified by index `n` */
-std::weak_ptr<const ogla::RuleList> ogla::Grammar::rule_list(size_type n) const {
+const std::vector<ogla::Grammar::Rule>& ogla::Grammar::rule_list(size_type n) const {
     return rules.at(n);
 }
 
@@ -41,7 +41,20 @@ ogla::Grammar ogla::Grammar::load() {
     //$ represent anything useful.
     //g.rules.push_back(RuleList{});
     //auto rlist = g.rules.at(0);
-    auto rlist = std::make_shared<RuleList>(RuleList{});
+    g.rules.resize(2);
+
+    g.rules[0].reserve(5);
+    g.rules[0].push_back(Rule{"foo_rule", "foo", 0});
+    g.rules[0].push_back(Rule{"bar_rule", "\\bbar\\b", 0});
+    g.rules[0].push_back(Rule{"quux_rule", "\\bqu+x\\b", 0});
+    g.rules[0].push_back(Rule{"quick_rule", "\\bquick\\b", 0});
+    g.rules[0].push_back(Rule{"c_rule", "\\b[A-Za-z]+c[A-Za-z]+\\b", 0});
+
+    // rules for a basic string tokenization
+    g.rules[0].push_back(Rule{"str_rule", "\"", 1});
+    g.rules[1].push_back(Rule{"escape_rule", "\\\\.", 1});
+    g.rules[1].push_back(Rule{"end_str_rule", "\"", 0});
+    /*auto rlist = std::make_shared<RuleList>(RuleList{});
     g.rules.push_back(rlist);
     rlist->push_back(Rule{"foo_rule", "foo", rlist });
     rlist->push_back(Rule{"bar_rule", "\\bbar\\b", rlist});
@@ -54,7 +67,7 @@ ogla::Grammar ogla::Grammar::load() {
     g.rules.push_back(rs);
     rs->push_back(Rule{"escape_rule", "\\\\.", rs});
     rs->push_back(Rule{"end_str_rule", "\"", rlist});
-    rlist->push_back(Rule{"str_rule", "\"", rs});
+    rlist->push_back(Rule{"str_rule", "\"", rs});*/
     //$                                                             $$
     //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
 
