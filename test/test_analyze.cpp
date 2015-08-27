@@ -90,13 +90,9 @@ BOOST_AUTO_TEST_CASE( test_analyze ) {
 BOOST_AUTO_TEST_CASE( test_analyzer ) {
     // pre-test code
     ogla::StepAnalyzer analyzer{text, grammar};
-    //const ogla::StepAnalyzer end;
 
     // run test
     for (int i = 0, s = expected_tokens.size(); i < s; i++, analyzer++) {
-        /*test_lexeme(analyzer->token, expected_tokens.at(i), i);
-        test_position(analyzer->token, expected_tokens.at(i), i);
-        test_name(analyzer->token, expected_tokens.at(i), i);*/
         test_lexeme(*analyzer, expected_tokens.at(i), i);
         test_position(*analyzer, expected_tokens.at(i), i);
         test_name(*analyzer, expected_tokens.at(i), i);

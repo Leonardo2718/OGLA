@@ -60,8 +60,7 @@ class Grammar {
         /*  returns a given list of rules indentified by index `n` */
 
     private:
-        //std::string grammerFilePath;// holds the path to the grammar file
-        std::string langName;       // stores the name of the current language grammer
+        std::string langName;                   // stores the name of the current language grammer
         std::vector<std::vector<Rule>> rules;   // holds all tokenization rules
 };
 

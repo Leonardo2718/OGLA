@@ -20,20 +20,6 @@ Distributed under the Boost Software License, Version 1.0.
 
 
 
-//~function implementations~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-/*
-- returns the first token identified and its corresponding rule
-- `text` is the text to be analyzed
-- `rules` is the list of rules checked when looking for the first token
-- `offset` is the offset from the start of the string to at which to begin looking for a token
-*/
-/*ogla::TokenRulePair ogla::firstToken(const std::string& text, const RuleList& rules, const int offset) {
-    return firstToken(text.begin(), text.end(), rules, offset);
-}*/
-
-
-
 //~`Token` public functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 std::string ogla::Token::name() const {
@@ -60,10 +46,6 @@ std::string ogla::Token::lexeme() const {
     else
         return match.str();
 }
-
-/*ogla::Rule ogla::Token::get_rule() const {
-    return rule;
-}*/
 
 bool ogla::Token::operator==(const Token& other) const {
     return ruleName == other.ruleName &&

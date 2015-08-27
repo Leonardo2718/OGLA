@@ -40,26 +40,21 @@ A class representing a token iterator-like object where each token is generated 
 class StepAnalyzer {
     public:
         // constructors
-        //StepAnalyzer() : current_pos{0} {}
         StepAnalyzer(const std::string& _text, const Grammar& _grammar);
 
-        //void jump_to(int pos, std::weak_ptr<const RuleList> rules);
         void jump_to(int pos, Grammar::RulesListIndex rules);
         /*  sends the analyzer to `pos` in the text and sets the current rules to `rules` */
 
         void reset();
         /*  sends the analyzer back to the start of the text */
 
-        //TokenRulePair next();
         Token next();
         /*  moves to and returns the next token */
 
         // overloaded operators
 
-        //TokenRulePair& operator*();
         Token& operator*();
 
-        //TokenRulePair* operator->();
         Token* operator->();
 
         StepAnalyzer& operator++();
@@ -75,8 +70,6 @@ class StepAnalyzer {
         text_itr text_end;
         text_itr current_pos;
 
-        //TokenRulePair currentPair;
-        //std::weak_ptr<const RuleList> currentRules;
         Token currentToken;
         Grammar::Rule currentRule{-1};
         Grammar::RulesListIndex currentRules;
