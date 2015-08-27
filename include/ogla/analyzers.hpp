@@ -3,7 +3,7 @@ Project: OGLA
 File: analyzers.hpp
 Author: Leonardo Banderali
 Created: July 12, 2015
-Last Modified: July 30, 2015
+Last Modified: August 26, 2015
 
 Description:
     A `StepAnalyzer` object is a special kind of token iterator.  It points to a token in the analyzed text.  However,
@@ -40,23 +40,27 @@ A class representing a token iterator-like object where each token is generated 
 class StepAnalyzer {
     public:
         // constructors
-        StepAnalyzer() : current_pos{0} {}
+        //StepAnalyzer() : current_pos{0} {}
         StepAnalyzer(const std::string& _text, const Grammar& _grammar);
 
-        void jump_to(int pos, std::weak_ptr<const RuleList> rules);
+        //void jump_to(int pos, std::weak_ptr<const RuleList> rules);
+        void jump_to(int pos, Grammar::RulesListIndex rules);
         /*  sends the analyzer to `pos` in the text and sets the current rules to `rules` */
 
         void reset();
         /*  sends the analyzer back to the start of the text */
 
-        TokenRulePair next();
+        //TokenRulePair next();
+        Token next();
         /*  moves to and returns the next token */
 
         // overloaded operators
 
-        TokenRulePair& operator*();
+        //TokenRulePair& operator*();
+        Token& operator*();
 
-        TokenRulePair* operator->();
+        //TokenRulePair* operator->();
+        Token* operator->();
 
         StepAnalyzer& operator++();
 
@@ -67,12 +71,15 @@ class StepAnalyzer {
 
         Grammar grammar;
 
-        const text_itr text_begin;
-        const text_itr text_end;
-        unsigned int current_pos;
+        text_itr text_begin;
+        text_itr text_end;
+        text_itr current_pos;
 
-        TokenRulePair currentPair;
-        std::weak_ptr<const RuleList> currentRules;
+        //TokenRulePair currentPair;
+        //std::weak_ptr<const RuleList> currentRules;
+        Token currentToken;
+        Grammar::Rule currentRule{-1};
+        Grammar::RulesListIndex currentRules;
 };
 
 }   // namespace `ogla`
