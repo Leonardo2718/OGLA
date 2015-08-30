@@ -22,18 +22,30 @@ Distributed under the Boost Software License, Version 1.0.
 
 //~`Token` public functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+/*
+returns true if the token is the result of an empty match (search result is empty)
+*/
 bool ogla::Token::empty() const {
     return match.empty();
 }
 
+/*
+returns the name of the token (should match name of the rule used to find it)
+*/
 std::string ogla::Token::name() const {
     return ruleName;
 }
 
+/*
+returns the specifed position of the token within the text searched (-1 is "no/don't care position")
+*/
 int ogla::Token::position() const {
     return pos;
 }
 
+/*
+returns the length of the lexeme (will be deprecated)
+*/
 int ogla::Token::length() const {
     if (match.empty())
         return -1;
@@ -41,6 +53,9 @@ int ogla::Token::length() const {
         return match.length();
 }
 
+/*
+returns the lexeme of this token
+*/
 std::string ogla::Token::lexeme() const {
     if (match.empty())
         return std::string();
