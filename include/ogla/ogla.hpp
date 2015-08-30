@@ -23,6 +23,6 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include "token.hpp"
 #include "grammar.hpp"
-#include "analyzers.hpp"
+#include "lexers.hpp"
 
 #endif  //OGLA_HPP
