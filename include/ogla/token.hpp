@@ -27,7 +27,7 @@ namespace ogla {
 
 //~forward declarations and function prototypes~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-template <typename NextStateType> class BasicRule;  // type for describing a rule used to identify a token
+template <typename LexerStateType> class BasicRule; // type for describing a rule used to identify a token
 class Token;                                        // type representing a token in analyzed text
 using TokenList = std::vector<Token>;
 struct TokenRulePair;
@@ -49,11 +49,11 @@ Rules have three basic properties:
 
 Each rule should only be used to search for a single category of token.  For example, "keyword" can be a category.
 */
-template <typename NextStateType>
+template <typename LexerStateType>
 class BasicRule {
     public:
-        BasicRule(NextStateType _nextState) : nextState{_nextState} {}
-        BasicRule(const std::string& _name, const std::string& _regex, NextStateType _nState)
+        BasicRule(LexerStateType _nState) : nState{_nState} {}
+        BasicRule(const std::string& _name, const std::string& _regex, LexerStateType _nState)
             : ruleName{_name}, rgx{_regex}, nState{_nState} {}
 
         std::string name() const;
@@ -62,36 +62,36 @@ class BasicRule {
         std::regex regex() const;
         /*  returns the regular expression used to find the token associated with this rule */
 
-        NextStateType nextState() const;
+        LexerStateType nextState() const;
         /*  returns the state the lexer should have after finding a token from this rule */
 
     private:
         std::string ruleName;
         std::regex rgx;         // holds the regular expression (regex) used to indentify the token
-        NextStateType nState;   // points to (but does not own) the next rules to be used for tokenization
+        LexerStateType nState;   // points to (but does not own) the next rules to be used for tokenization
 };
 
 /*
 returns the name of the rule (which should match the name of the token it defines)
 */
-template <typename NextStateType>
-std::string BasicRule<NextStateType>::name() const {
+template <typename LexerStateType>
+std::string BasicRule<LexerStateType>::name() const {
     return ruleName;
 }
 
 /*
 returns the regular expression used to find the token associated with this rule
 */
-template <typename NextStateType>
-std::regex BasicRule<NextStateType>::regex() const {
+template <typename LexerStateType>
+std::regex BasicRule<LexerStateType>::regex() const {
     return rgx;
 }
 
 /*
 returns the state the lexer should have after finding a token from this rule
 */
-template <typename NextStateType>
-NextStateType BasicRule<NextStateType>::nextState() const {
+template <typename LexerStateType>
+LexerStateType BasicRule<LexerStateType>::nextState() const {
     return nState;
 }
 
