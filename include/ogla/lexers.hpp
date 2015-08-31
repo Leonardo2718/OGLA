@@ -23,22 +23,27 @@ Distributed under the Boost Software License, Version 1.0.
 #include "grammar.hpp"
 
 // standard libraries
+#include <regex>
 #include <utility>
+
+
+
+//~declaration of namespace members~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 namespace ogla {
 
+/*
+Generates a list of tokens form some text and the rules stored in a grammar.  The tokens generated are non-empty
+and the position of their lexeme is defined with respect to `first`.  The first rule list in the grammar
+(with grammar index `0`) will be used to find the first token.
+
+@param first: points to the the start of the text
+@param last: points to one past the end of the text
+@param grammar: holds the tokenization rules. It must contain a minimum of one rule list as well as any other
+    rule lists that is internally pointed to.  Otherwise, behaviour is undefined.
+*/
 template <typename RandomAccessIterator>
 TokenList analyze(RandomAccessIterator first, RandomAccessIterator last, const Grammar& grammar);
-/*  Generates a list of tokens form some text and the rules stored in a grammar.  The tokens generated are non-empty
-    and the position of their lexeme is defined with respect to `first`.  The first rule list in the grammar
-    (with grammar index `0`) will be used to find the first token.  A negative grammar index will cause the lexer to
-    terminate the analysis
-
-    @param first: points to the the start of the text
-    @param last: points to one past the end of the text
-    @param grammar: holds the tokenization rules. It must contain a minimum of one rule list as well as any other
-        rule lists that is internally pointed to.  Otherwise, behaviour is undefined.
-*/
 
 /*
 The `BasicLexer` class template provides a convenient interface for analyzing text one token at a time.  The interface
@@ -79,10 +84,10 @@ class BasicLexer {
 
 
 
+//~template implementations~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 /*
-Generates a list of tokens form some text and the rules stored in a grammar.  The tokens generated are non-empty
-and the position of their lexeme is defined with respect to `first`.  The first rule list in the grammar
-(with grammar index `0`) will be used to find the first token.
+Generates a list of tokens form some text and the rules stored in a grammar.
 
 @param first: points to the the start of the text
 @param last: points to one past the end of the text
