@@ -4,6 +4,7 @@
 
 # ignore unit test executables
 test_*
+test/*_test
 
 # don't ignore the unit test source files
 !test_*.*
