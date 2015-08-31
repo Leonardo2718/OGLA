@@ -8,10 +8,7 @@ ARCHIVES	= ../ogla.a /lib/libboost_unit_test_framework.a
 
 # make rules
 
-all: test_firsttoken test_analyze
-
-test_%: test_%.cpp $(HEADERS) $(ARCHIVES) Makefile
-	$(CXX) $(CXXFLAGS) "$<" $(ARCHIVES) -o "$@"
+all: lexers_test
 
 %_test: %_test.cpp $(HEADERS) $(ARCHIVES) Makefile
 	$(CXX) $(CXXFLAGS) "$<" $(ARCHIVES) -o "$@"

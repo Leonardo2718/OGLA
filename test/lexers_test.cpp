@@ -18,7 +18,6 @@ Distributed under the Boost Software License, Version 1.0.
 #include <tuple>
 
 #include "ogla/ogla.hpp"
-#include "ogla/lexers.hpp"
 
 #define BOOST_TEST_MODULE MyTest
 #include <boost/test/unit_test.hpp>
