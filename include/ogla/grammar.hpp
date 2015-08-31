@@ -3,7 +3,7 @@ Project: OGLA
 File: grammar.hpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: August 30, 2015
+Last Modified: August 31, 2015
 
 Description:
     A `Grammar` is a set of tokenization rules that collectively define a "language".  A grammar can be used to analyze
@@ -40,9 +40,6 @@ namespace ogla {
     using GrammarIndex = int;
     using Rule = BasicRule<GrammarIndex>;
     using Grammar = std::vector<std::vector<Rule>>;
-
-    Grammar load();
-    /*  loads a default/test Grammar */
 
 }   // namespace `ogla`
 

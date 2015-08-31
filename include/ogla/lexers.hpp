@@ -3,7 +3,7 @@ Project: OGLA
 File: lexers.hpp
 Author: Leonardo Banderali
 Created: August 30, 2015
-Last Modified: August 30, 2015
+Last Modified: August 31, 2015
 
 Description:
     This file declares some lexers that make use of the facilities provided by this library.  As with the rest of this
@@ -79,6 +79,12 @@ class BasicLexer {
         GrammarIndex currentRuleList;
         Token currentToken;
 };
+
+/*
+Convenience function that constructs and returns a `BasicLexer` object
+*/
+template <typename RandomAccessIterator>
+BasicLexer<RandomAccessIterator> make_lexer(RandomAccessIterator first, RandomAccessIterator last, const Grammar& grammar);
 
 }
 
@@ -188,6 +194,14 @@ ogla::Token ogla::BasicLexer<RandomAccessIterator>::next() {
     }
 
     return currentToken;
+}
+
+/*
+Convenience function that constructs and returns a `BasicLexer` object
+*/
+template <typename RandomAccessIterator>
+ogla::BasicLexer<RandomAccessIterator> ogla::make_lexer(RandomAccessIterator first, RandomAccessIterator last, const Grammar& grammar) {
+    return BasicLexer<RandomAccessIterator>{first, last, grammar};
 }
 
 #endif//OGLA_LEXERS_HPP

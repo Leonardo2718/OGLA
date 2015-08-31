@@ -3,7 +3,7 @@ Project: OGLA
 File: token.hpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: August 30, 2015
+Last Modified: August 31, 2015
 
 Description:
     A `Token` is a unit of analyzed text and is identified using a `Rule`.  These form the basic building blocks of the
@@ -121,9 +121,6 @@ class Token {
 
         int position() const;
         /*  returns the specifed position of the token within the text searched (-1 is "no/don't care position") */
-
-        int length() const;
-        /*  returns the length of the lexeme (will be deprecated) */
 
         std::string lexeme() const;
         /*  returns the lexeme of this token */
