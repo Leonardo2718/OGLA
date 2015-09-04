@@ -124,7 +124,7 @@ ogla::TokenList ogla::analyze(RandomAccessIterator first, RandomAccessIterator l
             break;  // if no match was found, terminate the analysis
         } else {
             auto rule = ruleList[ruleIndex];
-            tokenList.push_back(Token{rule.name(), match, current - first + match.position()}); // append the new token to the list
+            tokenList.push_back(Token{rule.type(), match, current - first + match.position()}); // append the new token to the list
 
             auto nextRuleList = rule.nextState();
             if (nextRuleList < 0) {
@@ -187,7 +187,7 @@ ogla::Token ogla::BasicLexer<RandomAccessIterator>::next() {
             currentToken = Token{}; // if no match was found, return an empty token
         } else {
             auto rule = ruleList[ruleIndex];
-            currentToken = Token{rule.name(), match, currentPosition - first + match.position()};   // make the new token
+            currentToken = Token{rule.type(), match, currentPosition - first + match.position()};   // make the new token
             currentPosition += match.position() + match.length();                                   // move forward in the text
             currentRuleList = rule.nextState();
         }

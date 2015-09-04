@@ -30,10 +30,10 @@ bool ogla::Token::empty() const {
 }
 
 /*
-returns the name of the token (should match name of the rule used to find it)
+returns the type of the token
 */
-std::string ogla::Token::name() const {
-    return ruleName;
+std::string ogla::Token::type() const {
+    return tokenType;
 }
 
 /*
@@ -54,9 +54,7 @@ std::string ogla::Token::lexeme() const {
 }
 
 bool ogla::Token::operator==(const Token& other) const {
-    return ruleName == other.ruleName &&
-           match == other.match &&
-           pos == other.pos;
+    return tokenType == other.tokenType && match == other.match && pos == other.pos;
 }
 
 bool ogla::Token::operator!=(const Token& other) const {

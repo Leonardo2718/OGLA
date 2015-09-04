@@ -43,7 +43,7 @@ information needed by a lexer to find a token.  It also containes some informati
 the most sence when thinking about the lexer as a finite-state-machine (FSM).
 
 Rules have three basic properties:
-1. a name (which should be the same as the name of the tokens the rule finds)
+1. a token type (which is the type or category of tokens the rule finds)
 2. the regular expression used to search text
 3. a definition of what the state of a lexer should be after generating/finding a token using the rule
 
@@ -53,11 +53,11 @@ template <typename LexerStateType>
 class BasicRule {
     public:
         BasicRule(LexerStateType _nState) : nState{_nState} {}
-        BasicRule(const std::string& _name, const std::string& _regex, LexerStateType _nState)
-            : ruleName{_name}, rgx{_regex}, nState{_nState} {}
+        BasicRule(const std::string& _type, const std::string& _regex, LexerStateType _nState)
+            : tokenType{_type}, rgx{_regex}, nState{_nState} {}
 
-        std::string name() const;
-        /*  returns the name of the rule (which should match the name of the token it defines) */
+        std::string type() const;
+        /*  returns the type of token the rule finds */
 
         std::regex regex() const;
         /*  returns the regular expression used to find the token associated with this rule */
@@ -66,17 +66,17 @@ class BasicRule {
         /*  returns the state the lexer should have after finding a token from this rule */
 
     private:
-        std::string ruleName;
+        std::string tokenType;
         std::regex rgx;         // holds the regular expression (regex) used to indentify the token
         LexerStateType nState;   // points to (but does not own) the next rules to be used for tokenization
 };
 
 /*
-returns the name of the rule (which should match the name of the token it defines)
+returns the type of token the rule finds
 */
 template <typename LexerStateType>
-std::string BasicRule<LexerStateType>::name() const {
-    return ruleName;
+std::string BasicRule<LexerStateType>::type() const {
+    return tokenType;
 }
 
 /*
@@ -110,14 +110,14 @@ analyzer.
 class Token {
     public:
         Token() = default;
-        Token(const std::string& _ruleName, const std::smatch& _match, int _pos = -1)
-            :ruleName{_ruleName}, match{_match}, pos{_pos} {}
+        Token(const std::string& _tokenType, const std::smatch& _match, int _pos = -1)
+            :tokenType{_tokenType}, match{_match}, pos{_pos} {}
 
         bool empty() const;
         /*  returns true if the token is the result of an empty match (search result is empty) */
 
-        std::string name() const;
-        /*  returns the name of the token (should match name of the rule used to find it) */
+        std::string type() const;
+        /*  returns the type of the token */
 
         int position() const;
         /*  returns the specifed position of the token within the text searched (-1 is "no/don't care position") */
@@ -130,7 +130,7 @@ class Token {
         bool operator!=(const Token& other) const;
 
     private:
-        std::string ruleName;
+        std::string tokenType;
         std::smatch match;  // the matched lexeme associated with the token
         int pos = -1;       // the assigned position of the token in the text (-1 is "no/don't care position")
 };
