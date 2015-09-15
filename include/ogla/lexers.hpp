@@ -3,7 +3,7 @@ Project: OGLA
 File: lexers.hpp
 Author: Leonardo Banderali
 Created: August 30, 2015
-Last Modified: August 31, 2015
+Last Modified: September 15, 2015
 
 Description:
     This file declares some lexers that make use of the facilities provided by this library.  As with the rest of this
@@ -70,6 +70,9 @@ class BasicLexer {
 
         Token next();
         /*  generates, returns, and moves the internal reference to the next token in the text */
+
+        Token peak();
+        /*  generates and returns the next token but does not set the internal reference to it */
 
     private:
         RandomAccessIterator first;
@@ -194,6 +197,37 @@ ogla::Token ogla::BasicLexer<RandomAccessIterator>::next() {
     }
 
     return currentToken;
+}
+
+/*
+generates and returns the next token but does not set the internal reference to it
+*/
+template <typename RandomAccessIterator>
+ogla::Token ogla::BasicLexer<RandomAccessIterator>::peak() {
+    auto returnToken = Token{};
+
+    if (currentRuleList >= 0) {
+        auto ruleList = grammar[currentRuleList];
+        int ruleIndex = -1;
+        std::smatch match;
+        std::smatch tmpMatch;
+
+        // look for the rule that has the first match (in terms of position in the text)
+        for (int i = 0, count = ruleList.size(); i < count; ++i) {
+            if (std::regex_search(currentPosition, last, tmpMatch, ruleList[i].regex())
+                                && (ruleIndex < 0 || tmpMatch.position() < match.position())) {
+                match = std::move(tmpMatch);
+                ruleIndex = i;
+            }
+        }
+
+        if (ruleIndex >= 0) {
+            auto rule = ruleList[ruleIndex];
+            returnToken = Token{rule.type(), match, currentPosition - first + match.position()};
+        }
+    }
+
+    return returnToken;
 }
 
 /*
