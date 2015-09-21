@@ -71,7 +71,7 @@ class BasicLexer {
         BasicToken<TokenType> next();
         /*  generates, returns, and moves the internal reference to the next token in the text */
 
-        BasicToken<TokenType> peak();
+        BasicToken<TokenType> peek();
         /*  generates and returns the next token but does not set the internal reference to it */
 
     private:
@@ -203,7 +203,7 @@ ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::n
 generates and returns the next token but does not set the internal reference to it
 */
 template <typename RandomAccessIterator, typename TokenType>
-ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::peak() {
+ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::peek() {
     auto returnToken = BasicToken<TokenType>{};
 
     if (currentRuleList >= 0) {

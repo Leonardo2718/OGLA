@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE( test_BasicLexer ) {
         BOOST_CHECK_MESSAGE(token.lexeme() == std::get<1>(expected_tokens[i]), MAKE_MESSAGE(token,(expected_tokens[i])));
         BOOST_CHECK_MESSAGE(token.position() == std::get<2>(expected_tokens[i]), MAKE_MESSAGE(token,(expected_tokens[i])));
         if (i < s - 1) {
-            auto ptoken = lexer.peak();
+            auto ptoken = lexer.peek();
             BOOST_CHECK_MESSAGE(ptoken.type() == std::get<0>(expected_tokens[i + 1]), MAKE_MESSAGE(ptoken,(expected_tokens[i + 1])));
             BOOST_CHECK_MESSAGE(ptoken.lexeme() == std::get<1>(expected_tokens[i + 1]), MAKE_MESSAGE(ptoken,(expected_tokens[i + 1])));
             BOOST_CHECK_MESSAGE(ptoken.position() == std::get<2>(expected_tokens[i + 1]), MAKE_MESSAGE(ptoken,(expected_tokens[i + 1])));
