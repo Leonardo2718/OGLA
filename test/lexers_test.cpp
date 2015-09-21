@@ -3,7 +3,7 @@ Project: OGLA
 File: test_analyze.cpp
 Author: Leonardo Banderali
 Created: August 30, 2015
-Last Modified: September 15, 2015
+Last Modified: September 20, 2015
 
 Description: A simple unit test for `ogla::firstToken()`.
 
@@ -31,16 +31,16 @@ const std::string text{"The quick brown fox jumps over the lazy dog.\n"
                  "This is \"an \\t attempt\" to parse a string\n"};
 
 // the test rules to be used by the lexer
-const auto grammar = ogla::Grammar{
-    {ogla::Rule{"foo_rule", "foo", 0},
-    ogla::Rule{"bar_rule", "\\bbar\\b", 0},
-    ogla::Rule{"quux_rule", "\\bqu+x\\b", 0},
-    ogla::Rule{"quick_rule", "\\bquick\\b", 0},
-    ogla::Rule{"c_rule", "\\b[A-Za-z]+c[A-Za-z]+\\b", 0},
-    ogla::Rule{"str_rule", "\"", 1}},
+const auto grammar = ogla::BasicGrammar<std::string>{
+    {ogla::Rule<std::string>{"foo_rule", "foo", 0},
+    ogla::Rule<std::string>{"bar_rule", "\\bbar\\b", 0},
+    ogla::Rule<std::string>{"quux_rule", "\\bqu+x\\b", 0},
+    ogla::Rule<std::string>{"quick_rule", "\\bquick\\b", 0},
+    ogla::Rule<std::string>{"c_rule", "\\b[A-Za-z]+c[A-Za-z]+\\b", 0},
+    ogla::Rule<std::string>{"str_rule", "\"", 1}},
 
-    {ogla::Rule{"escape_rule", "\\\\.", 1},
-    ogla::Rule{"end_str_rule", "\"", 0}}
+    {ogla::Rule<std::string>{"escape_rule", "\\\\.", 1},
+    ogla::Rule<std::string>{"end_str_rule", "\"", 0}}
 };
 
 // a representation of the tokens expected from the lexer

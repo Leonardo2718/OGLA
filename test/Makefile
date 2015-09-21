@@ -4,7 +4,7 @@ CXXFLAGS	= -Wall -std=c++14 -iquote../include
 
 # prerequisite files
 HEADERS		= ../include/ogla/ogla.hpp
-ARCHIVES	= ../ogla.a /lib/libboost_unit_test_framework.a
+ARCHIVES	= /lib/libboost_unit_test_framework.a
 
 # make rules
 
