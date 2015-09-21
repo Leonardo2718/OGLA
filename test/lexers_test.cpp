@@ -32,15 +32,15 @@ const std::string text{"The quick brown fox jumps over the lazy dog.\n"
 
 // the test rules to be used by the lexer
 const auto grammar = ogla::BasicGrammar<std::string>{
-    {ogla::Rule<std::string>{"foo_rule", "foo", 0},
-    ogla::Rule<std::string>{"bar_rule", "\\bbar\\b", 0},
-    ogla::Rule<std::string>{"quux_rule", "\\bqu+x\\b", 0},
-    ogla::Rule<std::string>{"quick_rule", "\\bquick\\b", 0},
-    ogla::Rule<std::string>{"c_rule", "\\b[A-Za-z]+c[A-Za-z]+\\b", 0},
-    ogla::Rule<std::string>{"str_rule", "\"", 1}},
+    {ogla::BasicGrammarRule<std::string>{"foo_rule", "foo", 0},
+    ogla::BasicGrammarRule<std::string>{"bar_rule", "\\bbar\\b", 0},
+    ogla::BasicGrammarRule<std::string>{"quux_rule", "\\bqu+x\\b", 0},
+    ogla::BasicGrammarRule<std::string>{"quick_rule", "\\bquick\\b", 0},
+    ogla::BasicGrammarRule<std::string>{"c_rule", "\\b[A-Za-z]+c[A-Za-z]+\\b", 0},
+    ogla::BasicGrammarRule<std::string>{"str_rule", "\"", 1}},
 
-    {ogla::Rule<std::string>{"escape_rule", "\\\\.", 1},
-    ogla::Rule<std::string>{"end_str_rule", "\"", 0}}
+    {ogla::BasicGrammarRule<std::string>{"escape_rule", "\\\\.", 1},
+    ogla::BasicGrammarRule<std::string>{"end_str_rule", "\"", 0}}
 };
 
 // a representation of the tokens expected from the lexer

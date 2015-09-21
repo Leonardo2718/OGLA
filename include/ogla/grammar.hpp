@@ -39,9 +39,9 @@ namespace ogla {
 
     using BasicGrammarIndex = int;
     template<typename TokenType>
-    using Rule = BasicRule<TokenType, BasicGrammarIndex>;
+    using BasicGrammarRule = BasicRule<TokenType, BasicGrammarIndex>;
     template<typename TokenType>
-    using BasicGrammar = std::vector<std::vector<Rule<TokenType>>>;
+    using BasicGrammar = std::vector<std::vector<BasicGrammarRule<TokenType>>>;
 
 }   // namespace `ogla`
 
