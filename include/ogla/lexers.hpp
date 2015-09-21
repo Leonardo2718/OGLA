@@ -116,18 +116,6 @@ ogla::BasicTokenList<TokenType> ogla::analyze(RandomAccessIterator first, Random
     auto ruleList = grammar[0];
 
     while (current < last) {
-        /*int ruleIndex = -1;
-        std::smatch match;
-        std::smatch tmpMatch;
-
-        // look for the rule that has the first match (in terms of position in the text)
-        for (int i = 0, count = ruleList.size(); i < count; ++i) {
-            if (std::regex_search(current, last, tmpMatch, ruleList[i].regex())
-                                && (ruleIndex < 0 || tmpMatch.position() < match.position())) {
-                match = std::move(tmpMatch);
-                ruleIndex = i;
-            }
-        }*/
         auto matchPair = first_match(current, last, ruleList);
         auto match = std::get<0>(matchPair);
         auto ruleIndex = std::get<1>(matchPair);
@@ -182,18 +170,6 @@ ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::n
         currentToken = BasicToken<TokenType>{};     // if the grammar index is negative, return an empty token
     } else {
         auto ruleList = grammar[currentRuleList];
-        /*int ruleIndex = -1;
-        std::smatch match;
-        std::smatch tmpMatch;
-
-        // look for the rule that has the first match (in terms of position in the text)
-        for (int i = 0, count = ruleList.size(); i < count; ++i) {
-            if (std::regex_search(currentPosition, last, tmpMatch, ruleList[i].regex())
-                                && (ruleIndex < 0 || tmpMatch.position() < match.position())) {
-                match = std::move(tmpMatch);
-                ruleIndex = i;
-            }
-        }*/
         auto matchPair = first_match(currentPosition, last, ruleList);
         auto match = std::get<0>(matchPair);
         auto ruleIndex = std::get<1>(matchPair);
@@ -220,18 +196,6 @@ ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::p
 
     if (currentRuleList >= 0) {
         auto ruleList = grammar[currentRuleList];
-        /*int ruleIndex = -1;
-        std::smatch match;
-        std::smatch tmpMatch;
-
-        // look for the rule that has the first match (in terms of position in the text)
-        for (int i = 0, count = ruleList.size(); i < count; ++i) {
-            if (std::regex_search(currentPosition, last, tmpMatch, ruleList[i].regex())
-                                && (ruleIndex < 0 || tmpMatch.position() < match.position())) {
-                match = std::move(tmpMatch);
-                ruleIndex = i;
-            }
-        }*/
         auto matchPair = first_match(currentPosition, last, ruleList);
         auto match = std::get<0>(matchPair);
         auto ruleIndex = std::get<1>(matchPair);
