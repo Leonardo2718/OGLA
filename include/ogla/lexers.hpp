@@ -28,7 +28,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 
 
-//~declaration of namespace members~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~forward declare namespace members~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 namespace ogla {
 
@@ -46,6 +46,22 @@ template <typename RandomAccessIterator, typename TokenType>
 BasicTokenList<TokenType> analyze(RandomAccessIterator first, RandomAccessIterator last, const BasicGrammar<TokenType>& grammar);
 
 /*
+Provides a convenient interface for analyzing text one token at a time.
+*/
+template <typename RandomAccessIterator, typename TokenType>
+class BasicLexer;
+
+/*
+Convenience function that constructs and returns a `BasicLexer` object
+*/
+template <typename RandomAccessIterator, typename TokenType>
+BasicLexer<RandomAccessIterator, TokenType> make_lexer(RandomAccessIterator first, RandomAccessIterator last, const BasicGrammar<TokenType>& grammar);
+
+}   // namespace `ogla`
+
+
+
+/*
 The `BasicLexer` class template provides a convenient interface for analyzing text one token at a time.  The interface
 allows users to request each token sequentially.  This allows them to handle the tokens as the lexer generates them.
 
@@ -56,7 +72,7 @@ is defined relative to the starting position of the text (called `first`).  An e
 could be found in the text at any time.  This effectively terminates the analysis.
 */
 template <typename RandomAccessIterator, typename TokenType>
-class BasicLexer {
+class ogla::BasicLexer {
     public:
         BasicLexer(RandomAccessIterator _first, RandomAccessIterator _last, const BasicGrammar<TokenType>& _grammar);
         /*  @param first: points to the the start of the text
@@ -83,17 +99,7 @@ class BasicLexer {
         BasicToken<TokenType> currentToken;
 };
 
-/*
-Convenience function that constructs and returns a `BasicLexer` object
-*/
-template <typename RandomAccessIterator, typename TokenType>
-BasicLexer<RandomAccessIterator, TokenType> make_lexer(RandomAccessIterator first, RandomAccessIterator last, const BasicGrammar<TokenType>& grammar);
 
-}
-
-
-
-//~template implementations~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /*
 Generates a list of tokens form some text and the rules stored in a grammar.

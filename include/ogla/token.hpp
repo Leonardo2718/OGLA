@@ -23,15 +23,16 @@ Distributed under the Boost Software License, Version 1.0.
 #include <vector>
 #include <regex>
 
-namespace ogla {
+//~forward declare namespace members~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-//~forward declarations and function prototypes~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+namespace ogla {
 
 template <typename TokenType, typename LexerState> class BasicRule; // type for describing a rule used to identify a token
 template <typename TokenType> class BasicToken;                     // type representing a token in analyzed text
 template <typename TokenType>
 using BasicTokenList = std::vector<BasicToken<TokenType>>;
-struct TokenRulePair;
+
+}   // `ogla` namepsace
 
 
 
@@ -49,7 +50,7 @@ Rules have three basic properties:
 Each rule should only be used to search for a single category of token.  For example, "keyword" can be a category.
 */
 template <typename TokenType, typename LexerState>
-class BasicRule {
+class ogla::BasicRule {
     public:
         BasicRule(LexerState _nState) : nState{_nState} {}
         BasicRule(const TokenType& _type, const std::string& _regex, LexerState _nState)
@@ -70,6 +71,30 @@ class BasicRule {
         LexerState nState;   // points to (but does not own) the next rules to be used for tokenization
 };
 
+/*
+returns the type of token the rule finds
+*/
+template <typename TokenType, typename LexerState>
+TokenType ogla::BasicRule<TokenType, LexerState>::type() const {
+    return tokenType;
+}
+
+/*
+returns the regular expression used to find the token associated with this rule
+*/
+template <typename TokenType, typename LexerState>
+std::regex ogla::BasicRule<TokenType, LexerState>::regex() const {
+    return rgx;
+}
+
+/*
+returns the state the lexer should have after finding a token from this rule
+*/
+template <typename TokenType, typename LexerState>
+LexerState ogla::BasicRule<TokenType, LexerState>::nextState() const {
+    return nState;
+}
+
 
 
 /*
@@ -81,7 +106,7 @@ This essentailly offloads the work of learning the value of a token to an other 
 analyzer.
 */
 template <typename TokenType>
-class BasicToken {
+class ogla::BasicToken {
     public:
         BasicToken() = default;
         //BasicToken(const std::string& _tokenType, const std::smatch& _match, int _pos = -1)
@@ -111,32 +136,6 @@ class BasicToken {
         std::smatch match;  // the matched lexeme associated with the token
         int pos = -1;       // the assigned position of the token in the text (-1 is "no/don't care position")
 };
-
-}   // `ogla` namepsace
-
-/*
-returns the type of token the rule finds
-*/
-template <typename TokenType, typename LexerState>
-TokenType ogla::BasicRule<TokenType, LexerState>::type() const {
-    return tokenType;
-}
-
-/*
-returns the regular expression used to find the token associated with this rule
-*/
-template <typename TokenType, typename LexerState>
-std::regex ogla::BasicRule<TokenType, LexerState>::regex() const {
-    return rgx;
-}
-
-/*
-returns the state the lexer should have after finding a token from this rule
-*/
-template <typename TokenType, typename LexerState>
-LexerState ogla::BasicRule<TokenType, LexerState>::nextState() const {
-    return nState;
-}
 
 /*
 returns true if the token is the result of an empty match (search result is empty)
