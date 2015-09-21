@@ -3,7 +3,7 @@ Project: OGLA
 File: lexers.hpp
 Author: Leonardo Banderali
 Created: August 30, 2015
-Last Modified: September 20, 2015
+Last Modified: September 21, 2015
 
 Description:
     This file declares some lexers that make use of the facilities provided by this library.  As with the rest of this
@@ -116,7 +116,7 @@ ogla::BasicTokenList<TokenType> ogla::analyze(RandomAccessIterator first, Random
     auto ruleList = grammar[0];
 
     while (current < last) {
-        int ruleIndex = -1;
+        /*int ruleIndex = -1;
         std::smatch match;
         std::smatch tmpMatch;
 
@@ -127,7 +127,10 @@ ogla::BasicTokenList<TokenType> ogla::analyze(RandomAccessIterator first, Random
                 match = std::move(tmpMatch);
                 ruleIndex = i;
             }
-        }
+        }*/
+        auto matchPair = first_match(current, last, ruleList);
+        auto match = std::get<0>(matchPair);
+        auto ruleIndex = std::get<1>(matchPair);
 
         if (ruleIndex < 0) {
             break;  // if no match was found, terminate the analysis
@@ -179,7 +182,7 @@ ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::n
         currentToken = BasicToken<TokenType>{};     // if the grammar index is negative, return an empty token
     } else {
         auto ruleList = grammar[currentRuleList];
-        int ruleIndex = -1;
+        /*int ruleIndex = -1;
         std::smatch match;
         std::smatch tmpMatch;
 
@@ -190,12 +193,15 @@ ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::n
                 match = std::move(tmpMatch);
                 ruleIndex = i;
             }
-        }
+        }*/
+        auto matchPair = first_match(currentPosition, last, ruleList);
+        auto match = std::get<0>(matchPair);
+        auto ruleIndex = std::get<1>(matchPair);
 
         if (ruleIndex < 0) {
             currentToken = BasicToken<TokenType>{}; // if no match was found, return an empty token
         } else {
-            auto rule = ruleList[ruleIndex];
+            auto rule = grammar[currentRuleList][ruleIndex];
             currentToken = make_token(rule.type(), match, currentPosition - first + match.position());  // make the new token
             currentPosition += match.position() + match.length();                                       // move forward in the text
             currentRuleList = rule.nextState();
@@ -214,7 +220,7 @@ ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::p
 
     if (currentRuleList >= 0) {
         auto ruleList = grammar[currentRuleList];
-        int ruleIndex = -1;
+        /*int ruleIndex = -1;
         std::smatch match;
         std::smatch tmpMatch;
 
@@ -225,7 +231,10 @@ ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::p
                 match = std::move(tmpMatch);
                 ruleIndex = i;
             }
-        }
+        }*/
+        auto matchPair = first_match(currentPosition, last, ruleList);
+        auto match = std::get<0>(matchPair);
+        auto ruleIndex = std::get<1>(matchPair);
 
         if (ruleIndex >= 0) {
             auto rule = ruleList[ruleIndex];
