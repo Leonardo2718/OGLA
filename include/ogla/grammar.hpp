@@ -3,7 +3,7 @@ Project: OGLA
 File: grammar.hpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: August 31, 2015
+Last Modified: September 20, 2015
 
 Description:
     A `Grammar` is a set of tokenization rules that collectively define a "language".  A grammar can be used to analyze
@@ -27,19 +27,21 @@ Distributed under the Boost Software License, Version 1.0.
 namespace ogla {
 
     /*#################################################################################################################
-    ### Here, a `Grammar` is defined as a list of tokenization rule lists (a matrix of rules).  Each list in the     ##
-    ### Grammar containes the rules that can be used to find any token allowed by the language in a given state.  In ##
-    ### this sense, the state of a lexer (being an FSM) can be simply represented by an index to a rule list in the  ##
-    ### `Grammar` (which is, once again, a matrix of rules).                                                         ##
+    ### Here, a `BasicGrammar` is defined as a list of tokenization rule lists (a matrix of rules).  Each list in    ##
+    ### the grammar containes the rules that can be used to find any token allowed by the language in a given state. ##
+    ### In this sense, the state of a lexer (being an FSM) can be simply represented by an index to a rule list in   ##
+    ### the `BasicGrammar`.                                                                                          ##
     ###                                                                                                              ##
-    ### From this definition, we know that the "next state" property of a rule is just and index; an integer.  So,   ##
-    ### we create a type alias for `int` to be our `Grammar` index and another alias for a `BasicRule` which uses    ##
-    ### this index as its `LexerStateType`.                                                                          ##
+    ### From this definition, we know that the "next state" property of a rule is just an index; an integer.  So,    ##
+    ### we create a type alias for `int` to be our `BasicGrammar` index and another alias for a `BasicRule` which    ##
+    ### uses this index as its `LexerState` type.                                                                    ##
     #################################################################################################################*/
 
-    using GrammarIndex = int;
-    using Rule = BasicRule<GrammarIndex>;
-    using Grammar = std::vector<std::vector<Rule>>;
+    using BasicGrammarIndex = int;
+    template<typename TokenType>
+    using Rule = BasicRule<TokenType, BasicGrammarIndex>;
+    template<typename TokenType>
+    using BasicGrammar = std::vector<std::vector<Rule<TokenType>>>;
 
 }   // namespace `ogla`
 

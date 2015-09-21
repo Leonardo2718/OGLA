@@ -3,7 +3,7 @@ Project: OGLA
 File: token.hpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: September 15, 2015
+Last Modified: September 20, 2015
 
 Description:
     A `Token` is a unit of analyzed text and is identified using a `Rule`.  These form the basic building blocks of the
@@ -27,10 +27,10 @@ namespace ogla {
 
 //~forward declarations and function prototypes~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-template <typename LexerState> class BasicRule; // type for describing a rule used to identify a token
-template <typename TokenType> class BasicToken; // type representing a token in analyzed text
+template <typename TokenType, typename LexerState> class BasicRule; // type for describing a rule used to identify a token
+template <typename TokenType> class BasicToken;                     // type representing a token in analyzed text
 template <typename TokenType>
-using TokenList = std::vector<BasicToken<TokenType>>;
+using BasicTokenList = std::vector<BasicToken<TokenType>>;
 struct TokenRulePair;
 
 
@@ -48,14 +48,14 @@ Rules have three basic properties:
 
 Each rule should only be used to search for a single category of token.  For example, "keyword" can be a category.
 */
-template <typename LexerState>
+template <typename TokenType, typename LexerState>
 class BasicRule {
     public:
         BasicRule(LexerState _nState) : nState{_nState} {}
-        BasicRule(const std::string& _type, const std::string& _regex, LexerState _nState)
+        BasicRule(const TokenType& _type, const std::string& _regex, LexerState _nState)
             : tokenType{_type}, rgx{_regex}, nState{_nState} {}
 
-        std::string type() const;
+        TokenType type() const;
         /*  returns the type of token the rule finds */
 
         std::regex regex() const;
@@ -65,7 +65,7 @@ class BasicRule {
         /*  returns the state the lexer should have after finding a token from this rule */
 
     private:
-        std::string tokenType;
+        TokenType tokenType;
         std::regex rgx;         // holds the regular expression (regex) used to indentify the token
         LexerState nState;   // points to (but does not own) the next rules to be used for tokenization
 };
@@ -83,7 +83,7 @@ analyzer.
 template <typename TokenType>
 class BasicToken {
     public:
-        //BasicToken() = default;
+        BasicToken() = default;
         //BasicToken(const std::string& _tokenType, const std::smatch& _match, int _pos = -1)
         BasicToken(TokenType _tokenType, const std::smatch& _match, int _pos = -1)
             :tokenType{_tokenType}, match{_match}, pos{_pos} {}
@@ -117,24 +117,24 @@ class BasicToken {
 /*
 returns the type of token the rule finds
 */
-template <typename LexerState>
-std::string ogla::BasicRule<LexerState>::type() const {
+template <typename TokenType, typename LexerState>
+TokenType ogla::BasicRule<TokenType, LexerState>::type() const {
     return tokenType;
 }
 
 /*
 returns the regular expression used to find the token associated with this rule
 */
-template <typename LexerState>
-std::regex ogla::BasicRule<LexerState>::regex() const {
+template <typename TokenType, typename LexerState>
+std::regex ogla::BasicRule<TokenType, LexerState>::regex() const {
     return rgx;
 }
 
 /*
 returns the state the lexer should have after finding a token from this rule
 */
-template <typename LexerState>
-LexerState ogla::BasicRule<LexerState>::nextState() const {
+template <typename TokenType, typename LexerState>
+LexerState ogla::BasicRule<TokenType, LexerState>::nextState() const {
     return nState;
 }
 
