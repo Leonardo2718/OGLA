@@ -28,7 +28,21 @@ Distributed under the Boost Software License, Version 1.0.
 namespace ogla {
 
 template <typename TokenType, typename LexerState> class BasicRule; // type for describing a rule used to identify a token
-template <typename TokenType> class BasicToken;                     // type representing a token in analyzed text
+
+/*
+Convenience function that constructs and returns a `BasicRule` object.
+*/
+template <typename TokenType, typename LexerState>
+BasicRule<TokenType, LexerState> make_rule(const TokenType& type, const std::string& regex, const LexerState& nextState);
+
+template <typename TokenType> class BasicToken; // type representing a token in analyzed text
+
+/*
+Convenience function that constructs and returns a `BasicToken` object.
+*/
+template <typename TokenType> BasicToken<TokenType>
+make_token(const TokenType& tokenType, const std::smatch& match, int pos);
+
 template <typename TokenType>
 using BasicTokenList = std::vector<BasicToken<TokenType>>;
 
@@ -93,6 +107,16 @@ returns the state the lexer should have after finding a token from this rule
 template <typename TokenType, typename LexerState>
 LexerState ogla::BasicRule<TokenType, LexerState>::nextState() const {
     return nState;
+}
+
+
+
+/*
+Convenience function that constructs and returns a `BasicRule` object.
+*/
+template <typename TokenType, typename LexerState>
+ogla::BasicRule<TokenType, LexerState> ogla::make_rule(const TokenType& type, const std::string& regex, const LexerState& nextState) {
+    return BasicRule<TokenType, LexerState>{type, regex, nextState};
 }
 
 
@@ -180,6 +204,16 @@ bool ogla::BasicToken<TokenType>::operator==(const BasicToken& other) const {
 template <typename TokenType>
 bool ogla::BasicToken<TokenType>::operator!=(const BasicToken& other) const {
     return !(*this == other);
+}
+
+
+
+/*
+Convenience function that constructs and returns a `BasicToken` object.
+*/
+template <typename TokenType>
+ogla::BasicToken<TokenType> ogla::make_token(const TokenType& tokenType, const std::smatch& match, int pos) {
+    return BasicToken<TokenType>{tokenType, match, pos};
 }
 
 #endif//OGLA_TOKEN_HPP

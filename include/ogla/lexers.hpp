@@ -133,7 +133,7 @@ ogla::BasicTokenList<TokenType> ogla::analyze(RandomAccessIterator first, Random
             break;  // if no match was found, terminate the analysis
         } else {
             auto rule = ruleList[ruleIndex];
-            tokenList.push_back(BasicToken<TokenType>{rule.type(), match, current - first + match.position()}); // append the new token to the list
+            tokenList.push_back(make_token(rule.type(), match, current - first + match.position())); // append the new token to the list
 
             auto nextRuleList = rule.nextState();
             if (nextRuleList < 0) {
@@ -196,8 +196,8 @@ ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::n
             currentToken = BasicToken<TokenType>{}; // if no match was found, return an empty token
         } else {
             auto rule = ruleList[ruleIndex];
-            currentToken = BasicToken<TokenType>{rule.type(), match, currentPosition - first + match.position()};   // make the new token
-            currentPosition += match.position() + match.length();                                   // move forward in the text
+            currentToken = make_token(rule.type(), match, currentPosition - first + match.position());  // make the new token
+            currentPosition += match.position() + match.length();                                       // move forward in the text
             currentRuleList = rule.nextState();
         }
     }
@@ -229,12 +229,14 @@ ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::p
 
         if (ruleIndex >= 0) {
             auto rule = ruleList[ruleIndex];
-            returnToken = BasicToken<TokenType>{rule.type(), match, currentPosition - first + match.position()};
+            returnToken = make_token(rule.type(), match, currentPosition - first + match.position());
         }
     }
 
     return returnToken;
 }
+
+
 
 /*
 Convenience function that constructs and returns a `BasicLexer` object
