@@ -26,7 +26,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <regex>
 #include <utility>
 
-
+#include <iostream>
 
 //~forward declare namespace members~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -230,10 +230,12 @@ ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::p
     }*/
 
     if (currentRuleList >= 0 && currentPosition < last) {
+        std::smatch firstMatch;
         std::smatch m;
         for (const auto& r : grammar[currentRuleList]) {
             if (std::regex_search(currentPosition, last, m, r.regex()) && (firstMatch.empty() || m.position() < firstMatch.position() )) {
-                returnToken = make_token(r.type(), m, currentPosition - first + m.position());
+                firstMatch = std::move(m);
+                returnToken = make_token(r.type(), firstMatch, firstMatch.position() + currentPosition - first);
             }
         }
     }
