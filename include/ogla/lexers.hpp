@@ -3,7 +3,7 @@ Project: OGLA
 File: lexers.hpp
 Author: Leonardo Banderali
 Created: August 30, 2015
-Last Modified: September 21, 2015
+Last Modified: December 10, 2015
 
 Description:
     This file declares some lexers that make use of the facilities provided by this library.  As with the rest of this
@@ -166,7 +166,7 @@ generates, returns, and moves the internal reference to the next token in the te
 */
 template <typename RandomAccessIterator, typename TokenType>
 ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::next() {
-    if (currentRuleList < 0) {
+    /*if (currentRuleList < 0) {
         currentToken = BasicToken<TokenType>{};     // if the grammar index is negative, return an empty token
     } else {
         auto ruleList = grammar[currentRuleList];
@@ -182,6 +182,29 @@ ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::n
             currentPosition += match.position() + match.length();                                       // move forward in the text
             currentRuleList = rule.nextState();
         }
+    }*/
+
+    if (currentRuleList < 0 || currentPosition >= last) {
+        currentToken = BasicToken<TokenType>{};     // if the grammar index is negative, return an empty token
+    } else {
+        BasicGrammarRule<TokenType> rule{-1};
+        std::smatch firstMatch;
+        std::smatch m;
+        for (const auto& r : grammar[currentRuleList]) {
+            if (std::regex_search(currentPosition, last, m, r.regex()) && (firstMatch.empty() || m.position() < firstMatch.position() )) {
+                firstMatch = std::move(m);
+                rule = r;
+            }
+        }
+
+        if (firstMatch.empty()) {
+            currentToken = BasicToken<TokenType>{};
+        } else {
+            currentPosition += firstMatch.position();
+            currentToken = make_token(rule.type(), firstMatch, currentPosition - first);
+            currentPosition += firstMatch.length();
+            currentRuleList = rule.nextState();
+        }
     }
 
     return currentToken;
@@ -194,7 +217,7 @@ template <typename RandomAccessIterator, typename TokenType>
 ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::peek() {
     auto returnToken = BasicToken<TokenType>{};
 
-    if (currentRuleList >= 0) {
+    /*if (currentRuleList >= 0) {
         auto ruleList = grammar[currentRuleList];
         auto matchPair = first_match(currentPosition, last, ruleList);
         auto match = std::get<0>(matchPair);
@@ -203,6 +226,15 @@ ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::p
         if (ruleIndex >= 0) {
             auto rule = ruleList[ruleIndex];
             returnToken = make_token(rule.type(), match, currentPosition - first + match.position());
+        }
+    }*/
+
+    if (currentRuleList >= 0 && currentPosition < last) {
+        std::smatch m;
+        for (const auto& r : grammar[currentRuleList]) {
+            if (std::regex_search(currentPosition, last, m, r.regex()) && (firstMatch.empty() || m.position() < firstMatch.position() )) {
+                returnToken = make_token(r.type(), m, currentPosition - first + m.position());
+            }
         }
     }
 
