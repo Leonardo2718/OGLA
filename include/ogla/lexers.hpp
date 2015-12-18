@@ -32,6 +32,18 @@ Distributed under the Boost Software License, Version 1.0.
 
 namespace ogla {
 
+template <typename TokenType>
+using SimpleBasicGrammarRule = BasicGrammarRule<TokenType, char>;
+
+template <typename TokenType>
+using SimpleBasicGrammar = BasicGrammar<TokenType,  char>;
+
+template <typename TokenType>
+using SimpleBasicToken = BasicToken<TokenType, std::string::const_iterator>;
+
+template <typename TokenType>
+using SimpleBasicTokenList = BasicTokenList<TokenType, std::string::const_iterator>;
+
 /*
 Generates a list of tokens form some text and the rules stored in a grammar.  The tokens generated are non-empty
 and the position of their lexeme is defined with respect to `first`.  The first rule list in the grammar
@@ -164,24 +176,6 @@ generates, returns, and moves the internal reference to the next token in the te
 */
 template <typename RandomAccessIterator, typename TokenType>
 ogla::SimpleBasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::next() {
-    /*if (currentRuleList < 0) {
-        currentToken = SimpleBasicToken<TokenType>{};     // if the grammar index is negative, return an empty token
-    } else {
-        auto ruleList = grammar[currentRuleList];
-        auto matchPair = first_match(currentPosition, last, ruleList);
-        auto match = std::get<0>(matchPair);
-        auto ruleIndex = std::get<1>(matchPair);
-
-        if (ruleIndex < 0) {
-            currentToken = SimpleBasicToken<TokenType>{}; // if no match was found, return an empty token
-        } else {
-            auto rule = grammar[currentRuleList][ruleIndex];
-            currentToken = make_token(rule.type(), match, currentPosition - first + match.position());  // make the new token
-            currentPosition += match.position() + match.length();                                       // move forward in the text
-            currentRuleList = rule.nextState();
-        }
-    }*/
-
     if (currentRuleList < 0 || currentPosition >= last) {
         currentToken = SimpleBasicToken<TokenType>{};     // if the grammar index is negative, return an empty token
     } else {
@@ -214,18 +208,6 @@ generates and returns the next token but does not set the internal reference to 
 template <typename RandomAccessIterator, typename TokenType>
 ogla::SimpleBasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::peek() {
     auto returnToken = SimpleBasicToken<TokenType>{};
-
-    /*if (currentRuleList >= 0) {
-        auto ruleList = grammar[currentRuleList];
-        auto matchPair = first_match(currentPosition, last, ruleList);
-        auto match = std::get<0>(matchPair);
-        auto ruleIndex = std::get<1>(matchPair);
-
-        if (ruleIndex >= 0) {
-            auto rule = ruleList[ruleIndex];
-            returnToken = make_token(rule.type(), match, currentPosition - first + match.position());
-        }
-    }*/
 
     if (currentRuleList >= 0 && currentPosition < last) {
         std::smatch firstMatch;

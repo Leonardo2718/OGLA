@@ -21,7 +21,6 @@ Distributed under the Boost Software License, Version 1.0.
 #include "token.hpp"
 
 // c++ standard libraries
-//#include <type_traits>
 #include <vector>
 #include <tuple>
 
@@ -44,53 +43,6 @@ namespace ogla {
     template<typename TokenType, typename charT>
     using BasicGrammar = std::vector<std::vector<BasicGrammarRule<TokenType, charT>>>;
 
-    template <typename TokenType>
-    using SimpleBasicGrammarRule = BasicGrammarRule<TokenType, char>;
-
-    template <typename TokenType>
-    using SimpleBasicGrammar = BasicGrammar<TokenType,  char>;
-
-    template <typename TokenType>
-    using SimpleBasicToken = BasicToken<TokenType, std::string::const_iterator>;
-
-    template <typename TokenType>
-    using SimpleBasicTokenList = BasicTokenList<TokenType, std::string::const_iterator>;
-
-/*
-    template<typename BidirectionalIterator, typename TokenType> std::tuple<std::smatch, int>
-    first_match(BidirectionalIterator first, BidirectionalIterator last, std::vector<SimpleBasicGrammarRule<TokenType>> ruleList);
-//*/
-    /*
-    Given iterators to the start and one-past-the-end of a string, returns a `std::pair` containing the index of the
-    rule that gets matched first (with resptect to position in the text) as well as the `std::smatch` itself.
-    */
-
 }   // namespace `ogla`
-
-
-
-/*
-Given iterators to the start and one-past-the-end of a string, returns a `std::pair` containing the index of the
-rule that gets matched first (with resptect to position in the text) as well as the `std::smatch` itself.
-*/
-/*
-template<typename BidirectionalIterator, typename TokenType> std::tuple<std::smatch, int>
-ogla::first_match(BidirectionalIterator first, BidirectionalIterator last, std::vector<SimpleBasicGrammarRule<TokenType>> ruleList) {
-    int ruleIndex = -1;
-    std::smatch match;
-    std::smatch tmpMatch;
-
-    // look for the rule that has the first match (in terms of position in the text)
-    for (int i = 0, count = ruleList.size(); i < count; ++i) {
-        if (std::regex_search(first, last, tmpMatch, ruleList[i].regex())
-                            && (ruleIndex < 0 || tmpMatch.position() < match.position())) {
-            match = std::move(tmpMatch);
-            ruleIndex = i;
-        }
-    }
-
-    return make_tuple(match, ruleIndex);
-}
-//*/
 
 #endif//OGLA_GRAMMAR_HPP
