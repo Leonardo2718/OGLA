@@ -27,11 +27,13 @@ namespace ogla {
 //template <typename TokenType, typename LexerState, typename charT> class BasicRule; // type for describing a rule used to identify a token
 template <typename TokenType, typename LexerState> class BasicRule;
 
-/*
-Convenience function that constructs and returns a `BasicRule` object.
-*/
+template <typename TokenType, typename LexerState>
+BasicRule<TokenType, LexerState> make_basic_rule(const TokenType& type, const std::regex& regex, const LexerState& nextState);
+/*  convenience function that constructs and returns a `BasicRule` object */
+
 template <typename TokenType, typename LexerState>
 BasicRule<TokenType, LexerState> make_rule(const TokenType& type, const std::string& regex, const LexerState& nextState);
+/*  convenience function that constructs and returns a `BasicRule` object */
 
 }   // `ogla` namepsace
 
