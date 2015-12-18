@@ -110,27 +110,27 @@ Generates a list of tokens form some text and the rules stored in a grammar.
 template <typename RandomAccessIterator, typename TokenType> typename
 ogla::SimpleBasicTokenList<TokenType> ogla::analyze(RandomAccessIterator first, RandomAccessIterator last, const SimpleBasicGrammar<TokenType>& grammar) {
     SimpleBasicTokenList<TokenType> tokenList;
-    RandomAccessIterator current = first;
-    auto ruleList = grammar[0];
+    RandomAccessIterator currentPosition = first;
+    auto currentRuleList = 0;
 
-    while (current < last) {
-        auto matchPair = first_match(current, last, ruleList);
-        auto match = std::get<0>(matchPair);
-        auto ruleIndex = std::get<1>(matchPair);
-
-        if (ruleIndex < 0) {
-            break;  // if no match was found, terminate the analysis
-        } else {
-            auto rule = ruleList[ruleIndex];
-            tokenList.push_back(make_token(rule.type(), match, current - first + match.position())); // append the new token to the list
-
-            auto nextRuleList = rule.nextState();
-            if (nextRuleList < 0) {
-                break;  // if the next grammar index is negative, terminate the analysis
-            } else {
-                current += match.position() + match.length();   // move forward in the text
-                ruleList = grammar[nextRuleList];               // load the next rule list
+    while (currentPosition < last) {
+        SimpleBasicGrammarRule<TokenType> rule{-1};
+        std::smatch firstMatch;
+        std::smatch m;
+        for (const auto& r : grammar[currentRuleList]) {
+            if (std::regex_search(currentPosition, last, m, r.regex()) && (firstMatch.empty() || m.position() < firstMatch.position() )) {
+                firstMatch = std::move(m);
+                rule = r;
             }
+        }
+
+        if (firstMatch.empty()) {
+            break;
+        } else {
+            currentPosition += firstMatch.position();
+            tokenList.push_back(make_token(rule.type(), firstMatch, currentPosition - first)); // append the new token to the list
+            currentPosition += firstMatch.length();
+            currentRuleList = rule.nextState();
         }
     }
 

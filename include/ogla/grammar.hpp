@@ -56,7 +56,7 @@ namespace ogla {
     template <typename TokenType>
     using SimpleBasicTokenList = BasicTokenList<TokenType, std::string::const_iterator>;
 
-//*
+/*
     template<typename BidirectionalIterator, typename TokenType> std::tuple<std::smatch, int>
     first_match(BidirectionalIterator first, BidirectionalIterator last, std::vector<SimpleBasicGrammarRule<TokenType>> ruleList);
 //*/
@@ -73,7 +73,7 @@ namespace ogla {
 Given iterators to the start and one-past-the-end of a string, returns a `std::pair` containing the index of the
 rule that gets matched first (with resptect to position in the text) as well as the `std::smatch` itself.
 */
-//*
+/*
 template<typename BidirectionalIterator, typename TokenType> std::tuple<std::smatch, int>
 ogla::first_match(BidirectionalIterator first, BidirectionalIterator last, std::vector<SimpleBasicGrammarRule<TokenType>> ruleList) {
     int ruleIndex = -1;
