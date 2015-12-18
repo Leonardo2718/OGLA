@@ -3,7 +3,7 @@ Project: OGLA
 File: test_analyze.cpp
 Author: Leonardo Banderali
 Created: August 30, 2015
-Last Modified: September 20, 2015
+Last Modified: December 18, 2015
 
 Description: A simple unit test for `ogla::firstToken()`.
 
@@ -31,7 +31,7 @@ const std::string text{"The quick brown fox jumps over the lazy dog.\n"
                  "This is \"an \\t attempt\" to parse a string\n"};
 
 // the test rules to be used by the lexer
-const auto grammar = ogla::BasicGrammar<std::string>{
+const auto grammar = ogla::SimpleBasicGrammar<std::string>{
     {ogla::make_rule(std::string("foo_rule"), "foo", 0),    // must convert explicitly to string because argument is templated
     ogla::make_rule(std::string("bar_rule"), "\\bbar\\b", 0),
     ogla::make_rule(std::string("quux_rule"), "\\bqu+x\\b", 0),

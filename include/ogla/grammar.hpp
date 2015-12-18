@@ -3,7 +3,7 @@ Project: OGLA
 File: grammar.hpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: September 21, 2015
+Last Modified: December 18, 2015
 
 Description:
     A `Grammar` is a set of tokenization rules that collectively define a "language".  A grammar can be used to analyze
@@ -39,13 +39,27 @@ namespace ogla {
     #################################################################################################################*/
 
     using BasicGrammarIndex = int;
-    template<typename TokenType>
-    using BasicGrammarRule = BasicRule<TokenType, BasicGrammarIndex>;
-    template<typename TokenType>
-    using BasicGrammar = std::vector<std::vector<BasicGrammarRule<TokenType>>>;
+    template<typename TokenType, typename charT>
+    using BasicGrammarRule = BasicRule<TokenType, BasicGrammarIndex, charT>;
+    template<typename TokenType, typename charT>
+    using BasicGrammar = std::vector<std::vector<BasicGrammarRule<TokenType, charT>>>;
 
-    template<typename BidirectionalIterator, typename TokenType>
-    std::tuple<std::smatch, int> first_match(BidirectionalIterator first, BidirectionalIterator last, std::vector<BasicGrammarRule<TokenType>> ruleList);
+    template <typename TokenType>
+    using SimpleBasicGrammarRule = BasicGrammarRule<TokenType, char>;
+
+    template <typename TokenType>
+    using SimpleBasicGrammar = BasicGrammar<TokenType,  char>;
+
+    template <typename TokenType>
+    using SimpleBasicToken = BasicToken<TokenType, std::string::const_iterator>;
+
+    template <typename TokenType>
+    using SimpleBasicTokenList = BasicTokenList<TokenType, std::string::const_iterator>;
+
+//*
+    template<typename BidirectionalIterator, typename TokenType> std::tuple<std::smatch, int>
+    first_match(BidirectionalIterator first, BidirectionalIterator last, std::vector<SimpleBasicGrammarRule<TokenType>> ruleList);
+//*/
     /*
     Given iterators to the start and one-past-the-end of a string, returns a `std::pair` containing the index of the
     rule that gets matched first (with resptect to position in the text) as well as the `std::smatch` itself.
@@ -59,8 +73,9 @@ namespace ogla {
 Given iterators to the start and one-past-the-end of a string, returns a `std::pair` containing the index of the
 rule that gets matched first (with resptect to position in the text) as well as the `std::smatch` itself.
 */
-template<typename BidirectionalIterator, typename TokenType>
-std::tuple<std::smatch, int> ogla::first_match(BidirectionalIterator first, BidirectionalIterator last, std::vector<BasicGrammarRule<TokenType>> ruleList) {
+//*
+template<typename BidirectionalIterator, typename TokenType> std::tuple<std::smatch, int>
+ogla::first_match(BidirectionalIterator first, BidirectionalIterator last, std::vector<SimpleBasicGrammarRule<TokenType>> ruleList) {
     int ruleIndex = -1;
     std::smatch match;
     std::smatch tmpMatch;
@@ -76,5 +91,6 @@ std::tuple<std::smatch, int> ogla::first_match(BidirectionalIterator first, Bidi
 
     return make_tuple(match, ruleIndex);
 }
+//*/
 
 #endif//OGLA_GRAMMAR_HPP
