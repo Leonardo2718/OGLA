@@ -27,7 +27,8 @@ Distributed under the Boost Software License, Version 1.0.
 
 namespace ogla {
 
-template <typename TokenType, typename LexerState> class BasicRule; // type for describing a rule used to identify a token
+//template <typename TokenType, typename LexerState, typename charT> class BasicRule; // type for describing a rule used to identify a token
+template <typename TokenType, typename LexerState> class BasicRule;
 
 /*
 Convenience function that constructs and returns a `BasicRule` object.
@@ -62,17 +63,25 @@ Rules have three basic properties:
 3. a definition of what the state of a lexer should be after generating/finding a token using the rule
 
 Each rule should only be used to search for a single category of token.  For example, "keyword" can be a category.
+
+The three template paramaters are:
+* TokenType: the data type for the identifying type/category of tokens the rule matches
+* LexerState: the type used to represent lexer states
+* charT: the type used for regular expressions
+
 */
+//template <typename TokenType, typename LexerState, typename charT>
 template <typename TokenType, typename LexerState>
 class ogla::BasicRule {
     public:
         BasicRule(LexerState _nState) : nState{_nState} {}
-        BasicRule(const TokenType& _type, const std::string& _regex, LexerState _nState)
+        BasicRule(const TokenType& _type, const std::regex& _regex, LexerState _nState)
             : tokenType{_type}, rgx{_regex}, nState{_nState} {}
 
         TokenType type() const;
         /*  returns the type of token the rule finds */
 
+        //std::basic_regex<charT> regex() const;
         std::regex regex() const;
         /*  returns the regular expression used to find the token associated with this rule */
 
@@ -116,7 +125,7 @@ Convenience function that constructs and returns a `BasicRule` object.
 */
 template <typename TokenType, typename LexerState>
 ogla::BasicRule<TokenType, LexerState> ogla::make_rule(const TokenType& type, const std::string& regex, const LexerState& nextState) {
-    return BasicRule<TokenType, LexerState>{type, regex, nextState};
+    return BasicRule<TokenType, LexerState>{type, std::regex(regex), nextState};
 }
 
 
