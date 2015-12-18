@@ -72,7 +72,7 @@ const std::vector<std::tuple<std::string, std::string, int>> expected_tokens = {
 
 BOOST_AUTO_TEST_CASE( test_analyze ) {
     // pre-test code
-    auto tokens = ogla::analyze(text.cbegin(), text.cend(), grammar);
+    auto tokens = ogla::basic_analyze(text.cbegin(), text.cend(), grammar);
 
     // run test
     BOOST_CHECK_MESSAGE(tokens.size() == expected_tokens.size(),
