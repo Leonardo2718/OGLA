@@ -3,7 +3,7 @@ Project: OGLA
 File: token.hpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: September 20, 2015
+Last Modified: December 17, 2015
 
 Description:
     A `Token` is a unit of analyzed text and is identified using a `Rule`.  These form the basic building blocks of the
@@ -18,14 +18,21 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef OGLA_TOKEN_HPP
 #define OGLA_TOKEN_HPP
 
-//include standard c++ libraries
+// c++ standard libraries
 #include <string>
 #include <vector>
-#include <regex>
+
+// macro definitions for boost libraries
+#define BOOST_REGEX_USE_CPP_LOCALE
+
+// boost libraries
+#include <boost/regex.hpp>
 
 //~forward declare namespace members~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 namespace ogla {
+
+using smatch = boost::match_results<std::string::const_iterator>;
 
 template <typename TokenType, typename LexerState> class BasicRule; // type for describing a rule used to identify a token
 
@@ -41,7 +48,7 @@ template <typename TokenType> class BasicToken; // type representing a token in 
 Convenience function that constructs and returns a `BasicToken` object.
 */
 template <typename TokenType> BasicToken<TokenType>
-make_token(const TokenType& tokenType, const std::smatch& match, int pos);
+make_token(const TokenType& tokenType, const ogla::smatch& match, int pos);
 
 template <typename TokenType>
 using BasicTokenList = std::vector<BasicToken<TokenType>>;
@@ -49,6 +56,8 @@ using BasicTokenList = std::vector<BasicToken<TokenType>>;
 }   // `ogla` namepsace
 
 
+
+//~Implementations~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /*
 A class template for describing a rule used to find a token (a tokenization rule).  A rule essentially containes the
@@ -73,7 +82,7 @@ class ogla::BasicRule {
         TokenType type() const;
         /*  returns the type of token the rule finds */
 
-        std::regex regex() const;
+        boost::regex regex() const;
         /*  returns the regular expression used to find the token associated with this rule */
 
         LexerState nextState() const;
@@ -81,7 +90,7 @@ class ogla::BasicRule {
 
     private:
         TokenType tokenType;
-        std::regex rgx;         // holds the regular expression (regex) used to indentify the token
+        boost::regex rgx;         // holds the regular expression (regex) used to indentify the token
         LexerState nState;   // points to (but does not own) the next rules to be used for tokenization
 };
 
@@ -97,7 +106,7 @@ TokenType ogla::BasicRule<TokenType, LexerState>::type() const {
 returns the regular expression used to find the token associated with this rule
 */
 template <typename TokenType, typename LexerState>
-std::regex ogla::BasicRule<TokenType, LexerState>::regex() const {
+boost::regex ogla::BasicRule<TokenType, LexerState>::regex() const {
     return rgx;
 }
 
@@ -133,8 +142,8 @@ template <typename TokenType>
 class ogla::BasicToken {
     public:
         BasicToken() = default;
-        //BasicToken(const std::string& _tokenType, const std::smatch& _match, int _pos = -1)
-        BasicToken(TokenType _tokenType, const std::smatch& _match, int _pos = -1)
+        //BasicToken(const std::string& _tokenType, const ogla::smatch& _match, int _pos = -1)
+        BasicToken(TokenType _tokenType, const ogla::smatch& _match, int _pos = -1)
             :tokenType{_tokenType}, match{_match}, pos{_pos} {}
 
         bool empty() const;
@@ -157,7 +166,7 @@ class ogla::BasicToken {
     private:
         //std::string tokenType;
         TokenType tokenType;
-        std::smatch match;  // the matched lexeme associated with the token
+        ogla::smatch match;  // the matched lexeme associated with the token
         int pos = -1;       // the assigned position of the token in the text (-1 is "no/don't care position")
 };
 
@@ -212,7 +221,7 @@ bool ogla::BasicToken<TokenType>::operator!=(const BasicToken& other) const {
 Convenience function that constructs and returns a `BasicToken` object.
 */
 template <typename TokenType>
-ogla::BasicToken<TokenType> ogla::make_token(const TokenType& tokenType, const std::smatch& match, int pos) {
+ogla::BasicToken<TokenType> ogla::make_token(const TokenType& tokenType, const ogla::smatch& match, int pos) {
     return BasicToken<TokenType>{tokenType, match, pos};
 }
 

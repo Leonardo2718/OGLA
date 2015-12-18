@@ -3,7 +3,7 @@ Project: OGLA
 File: lexers.hpp
 Author: Leonardo Banderali
 Created: August 30, 2015
-Last Modified: December 10, 2015
+Last Modified: December 17, 2015
 
 Description:
     This file declares some lexers that make use of the facilities provided by this library.  As with the rest of this
@@ -23,7 +23,6 @@ Distributed under the Boost Software License, Version 1.0.
 #include "grammar.hpp"
 
 // standard libraries
-#include <regex>
 #include <utility>
 
 
@@ -188,10 +187,10 @@ ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::n
         currentToken = BasicToken<TokenType>{};     // if the grammar index is negative, return an empty token
     } else {
         BasicGrammarRule<TokenType> rule{-1};
-        std::smatch firstMatch;
-        std::smatch m;
+        ogla::smatch firstMatch;
+        ogla::smatch m;
         for (const auto& r : grammar[currentRuleList]) {
-            if (std::regex_search(currentPosition, last, m, r.regex()) && (firstMatch.empty() || m.position() < firstMatch.position() )) {
+            if (boost::regex_search(currentPosition, last, m, r.regex()) && (firstMatch.empty() || m.position() < firstMatch.position() )) {
                 firstMatch = std::move(m);
                 rule = r;
             }
@@ -230,10 +229,10 @@ ogla::BasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::p
     }*/
 
     if (currentRuleList >= 0 && currentPosition < last) {
-        std::smatch firstMatch;
-        std::smatch m;
+        ogla::smatch firstMatch;
+        ogla::smatch m;
         for (const auto& r : grammar[currentRuleList]) {
-            if (std::regex_search(currentPosition, last, m, r.regex()) && (firstMatch.empty() || m.position() < firstMatch.position() )) {
+            if (boost::regex_search(currentPosition, last, m, r.regex()) && (firstMatch.empty() || m.position() < firstMatch.position() )) {
                 firstMatch = std::move(m);
                 returnToken = make_token(r.type(), firstMatch, firstMatch.position() + currentPosition - first);
             }
