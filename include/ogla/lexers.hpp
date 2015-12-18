@@ -3,7 +3,7 @@ Project: OGLA
 File: lexers.hpp
 Author: Leonardo Banderali
 Created: August 30, 2015
-Last Modified: December 10, 2015
+Last Modified: December 17, 2015
 
 Description:
     This file declares some lexers that make use of the facilities provided by this library.  As with the rest of this
