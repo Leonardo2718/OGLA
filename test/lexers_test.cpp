@@ -31,7 +31,7 @@ const std::string text{"The quick brown fox jumps over the lazy dog.\n"
                  "This is \"an \\t attempt\" to parse a string\n"};
 
 // the test rules to be used by the lexer
-const auto grammar = ogla::SimpleBasicGrammar<std::string>{
+const auto grammar = ogla::BasicGrammar<std::string, char>{
     {ogla::make_rule(std::string("foo_rule"), "foo", 0),    // must convert explicitly to string because argument is templated
     ogla::make_rule(std::string("bar_rule"), "\\bbar\\b", 0),
     ogla::make_rule(std::string("quux_rule"), "\\bqu+x\\b", 0),
@@ -89,8 +89,7 @@ BOOST_AUTO_TEST_CASE( test_analyze ) {
 
 BOOST_AUTO_TEST_CASE( test_BasicLexer ) {
     // pre-test code
-    //auto lexer = ogla::make_lexer(text.cbegin(), text.cend(), grammar);
-    auto lexer = ogla::BasicLexer<std::string::const_iterator, std::string, char>(text.cbegin(), text.cend(), grammar);
+    auto lexer = ogla::make_lexer(text.cbegin(), text.cend(), grammar);
 
     // run test
     for (int i = 0, s = expected_tokens.size(); i < s; i++) {

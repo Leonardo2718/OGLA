@@ -23,7 +23,6 @@ Distributed under the Boost Software License, Version 1.0.
 #include "grammar.hpp"
 
 // standard libraries
-#include <regex>
 #include <utility>
 #include <string>
 
@@ -64,8 +63,9 @@ Provides a convenient interface for analyzing text one token at a time.
 template <typename RandomAccessIterator, typename TokenType, typename charT>
 class BasicLexer;
 
-//template <typename RandomAccessIterator, typename TokenType, typename charT> BasicLexer<RandomAccessIterator, TokenType>
-//make_lexer(RandomAccessIterator first, RandomAccessIterator last, const BasicGrammar<TokenType, charT>& grammar);
+template <typename RandomAccessIterator, typename TokenType, typename charT> auto
+make_lexer(RandomAccessIterator first, RandomAccessIterator last, const BasicGrammar<TokenType, charT>& grammar)
+-> BasicLexer<RandomAccessIterator, TokenType, charT>;
 /*  convenience function that constructs and returns a `BasicLexer` object */
 
 }   // namespace `ogla`
@@ -84,10 +84,7 @@ could be found in the text at any time.  This effectively terminates the analysi
 */
 template <typename RandomAccessIterator, typename TokenType, typename charT>
 class ogla::BasicLexer {
-        //static constexpr RandomAccessIterator ___tmp___ = RandomAccessIterator{};
-
     public:
-        //using charT = decltype(*___tmp___);
 
         BasicLexer(RandomAccessIterator _first, RandomAccessIterator _last, const BasicGrammar<TokenType, charT>& _grammar);
         /*  @param first: points to the the start of the text
@@ -233,9 +230,10 @@ ogla::BasicToken<TokenType, RandomAccessIterator> ogla::BasicLexer<RandomAccessI
 /*
 Convenience function that constructs and returns a `BasicLexer` object
 */
-/*template <typename RandomAccessIterator, typename TokenType, typename charT> ogla::BasicLexer<RandomAccessIterator, TokenType>
-ogla::make_lexer(RandomAccessIterator first, RandomAccessIterator last, const BasicGrammar<TokenType, charT>& grammar) {
-    return BasicLexer<RandomAccessIterator, TokenType>(first, last, grammar);
-}*/
+template <typename RandomAccessIterator, typename TokenType, typename charT> auto
+ogla::make_lexer(RandomAccessIterator first, RandomAccessIterator last, const BasicGrammar<TokenType, charT>& grammar)
+-> ogla::BasicLexer<RandomAccessIterator, TokenType, charT>{
+    return BasicLexer<RandomAccessIterator, TokenType, charT>(first, last, grammar);
+}
 
 #endif//OGLA_LEXERS_HPP
