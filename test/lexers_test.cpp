@@ -89,7 +89,8 @@ BOOST_AUTO_TEST_CASE( test_analyze ) {
 
 BOOST_AUTO_TEST_CASE( test_BasicLexer ) {
     // pre-test code
-    auto lexer = ogla::make_lexer(text.cbegin(), text.cend(), grammar);
+    //auto lexer = ogla::make_lexer(text.cbegin(), text.cend(), grammar);
+    auto lexer = ogla::BasicLexer<std::string::const_iterator, std::string, char>(text.cbegin(), text.cend(), grammar);
 
     // run test
     for (int i = 0, s = expected_tokens.size(); i < s; i++) {

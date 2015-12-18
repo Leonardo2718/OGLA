@@ -23,6 +23,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include "grammar.hpp"
 
 // standard libraries
+#include <regex>
 #include <utility>
 #include <string>
 
@@ -54,18 +55,18 @@ and the position of their lexeme is defined with respect to `first`.  The first 
 @param grammar: holds the tokenization rules. It must contain a minimum of one rule list as well as any other
     rule lists that is internally pointed to.  Otherwise, behaviour is undefined.
 */
-template <typename RandomAccessIterator, typename TokenType>
-SimpleBasicTokenList<TokenType> analyze(RandomAccessIterator first, RandomAccessIterator last, const SimpleBasicGrammar<TokenType>& grammar);
+template <typename RandomAccessIterator, typename TokenType> SimpleBasicTokenList<TokenType>
+analyze(RandomAccessIterator first, RandomAccessIterator last, const SimpleBasicGrammar<TokenType>& grammar);
 
 /*
 Provides a convenient interface for analyzing text one token at a time.
 */
-template <typename RandomAccessIterator, typename TokenType>
+template <typename RandomAccessIterator, typename TokenType, typename charT>
 class BasicLexer;
 
-template <typename RandomAccessIterator, typename TokenType>
-BasicLexer<RandomAccessIterator, TokenType> make_lexer(RandomAccessIterator first, RandomAccessIterator last, const SimpleBasicGrammar<TokenType>& grammar);
-/* convenience function that constructs and returns a `BasicLexer` object */
+//template <typename RandomAccessIterator, typename TokenType, typename charT> BasicLexer<RandomAccessIterator, TokenType>
+//make_lexer(RandomAccessIterator first, RandomAccessIterator last, const BasicGrammar<TokenType, charT>& grammar);
+/*  convenience function that constructs and returns a `BasicLexer` object */
 
 }   // namespace `ogla`
 
@@ -81,32 +82,36 @@ return the token following the current one.  This also sets the new token as the
 is defined relative to the starting position of the text (called `first`).  An empty token is returned if no token
 could be found in the text at any time.  This effectively terminates the analysis.
 */
-template <typename RandomAccessIterator, typename TokenType>
+template <typename RandomAccessIterator, typename TokenType, typename charT>
 class ogla::BasicLexer {
+        //static constexpr RandomAccessIterator ___tmp___ = RandomAccessIterator{};
+
     public:
-        BasicLexer(RandomAccessIterator _first, RandomAccessIterator _last, const SimpleBasicGrammar<TokenType>& _grammar);
+        //using charT = decltype(*___tmp___);
+
+        BasicLexer(RandomAccessIterator _first, RandomAccessIterator _last, const BasicGrammar<TokenType, charT>& _grammar);
         /*  @param first: points to the the start of the text
             @param last: points to one past the end of the text
             @param grammar: holds the tokenization rules. It must contain a minimum of one rule list as well as any
                 other rule lists that is internally pointed to.  Otherwise, behaviour is undefined.
         */
 
-        SimpleBasicToken<TokenType> current() const;
+        BasicToken<TokenType, RandomAccessIterator> current() const;
         /*  returns the token currently being referenced */
 
-        SimpleBasicToken<TokenType> next();
+        BasicToken<TokenType, RandomAccessIterator> next();
         /*  generates, returns, and moves the internal reference to the next token in the text */
 
-        SimpleBasicToken<TokenType> peek();
+        BasicToken<TokenType, RandomAccessIterator> peek();
         /*  generates and returns the next token but does not set the internal reference to it */
 
     private:
         RandomAccessIterator first;
         RandomAccessIterator last;
         RandomAccessIterator currentPosition;
-        SimpleBasicGrammar<TokenType> grammar;
+        BasicGrammar<TokenType, charT> grammar;
         BasicGrammarIndex currentRuleList;
-        SimpleBasicToken<TokenType> currentToken;
+        BasicToken<TokenType, RandomAccessIterator> currentToken;
 };
 
 
@@ -119,8 +124,8 @@ Generates a list of tokens form some text and the rules stored in a grammar.
 @param grammar: holds the tokenization rules. It must contain a minimum of one rule list as well as any other
     rule lists that is internally pointed to.  Otherwise, behaviour is undefined.
 */
-template <typename RandomAccessIterator, typename TokenType> typename
-ogla::SimpleBasicTokenList<TokenType> ogla::analyze(RandomAccessIterator first, RandomAccessIterator last, const SimpleBasicGrammar<TokenType>& grammar) {
+template <typename RandomAccessIterator, typename TokenType> typename ogla::SimpleBasicTokenList<TokenType>
+ogla::analyze(RandomAccessIterator first, RandomAccessIterator last, const SimpleBasicGrammar<TokenType>& grammar) {
     SimpleBasicTokenList<TokenType> tokenList;
     RandomAccessIterator currentPosition = first;
     auto currentRuleList = 0;
@@ -157,8 +162,8 @@ ogla::SimpleBasicTokenList<TokenType> ogla::analyze(RandomAccessIterator first, 
 @param grammar: holds the tokenization rules. It must contain a minimum of one rule list as well as any
     other rule lists that is internally pointed to.  Otherwise, behaviour is undefined.
 */
-template <typename RandomAccessIterator, typename TokenType>
-ogla::BasicLexer<RandomAccessIterator, TokenType>::BasicLexer(RandomAccessIterator _first, RandomAccessIterator _last, const SimpleBasicGrammar<TokenType>& _grammar)
+template <typename RandomAccessIterator, typename TokenType, typename charT>
+ogla::BasicLexer<RandomAccessIterator, TokenType, charT>::BasicLexer(RandomAccessIterator _first, RandomAccessIterator _last, const BasicGrammar<TokenType, charT>& _grammar)
 : first{_first}, last{_last}, currentPosition{_first}, grammar{_grammar}, currentRuleList{0} {
     currentToken = next();
 }
@@ -166,22 +171,22 @@ ogla::BasicLexer<RandomAccessIterator, TokenType>::BasicLexer(RandomAccessIterat
 /*
 returns the token currently being referenced
 */
-template <typename RandomAccessIterator, typename TokenType>
-ogla::SimpleBasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::current() const {
+template <typename RandomAccessIterator, typename TokenType, typename charT>
+ogla::BasicToken<TokenType, RandomAccessIterator> ogla::BasicLexer<RandomAccessIterator, TokenType, charT>::current() const {
     return currentToken;
 }
 
 /*
 generates, returns, and moves the internal reference to the next token in the text
 */
-template <typename RandomAccessIterator, typename TokenType>
-ogla::SimpleBasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::next() {
+template <typename RandomAccessIterator, typename TokenType, typename charT>
+ogla::BasicToken<TokenType, RandomAccessIterator> ogla::BasicLexer<RandomAccessIterator, TokenType, charT>::next() {
     if (currentRuleList < 0 || currentPosition >= last) {
         currentToken = SimpleBasicToken<TokenType>{};     // if the grammar index is negative, return an empty token
     } else {
-        SimpleBasicGrammarRule<TokenType> rule{-1};
-        std::smatch firstMatch;
-        std::smatch m;
+        BasicGrammarRule<TokenType, charT> rule{-1};
+        std::match_results<RandomAccessIterator> firstMatch;
+        std::match_results<RandomAccessIterator> m;
         for (const auto& r : grammar[currentRuleList]) {
             if (std::regex_search(currentPosition, last, m, r.regex()) && (firstMatch.empty() || m.position() < firstMatch.position() )) {
                 firstMatch = std::move(m);
@@ -205,13 +210,13 @@ ogla::SimpleBasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenTy
 /*
 generates and returns the next token but does not set the internal reference to it
 */
-template <typename RandomAccessIterator, typename TokenType>
-ogla::SimpleBasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenType>::peek() {
+template <typename RandomAccessIterator, typename TokenType, typename charT>
+ogla::BasicToken<TokenType, RandomAccessIterator> ogla::BasicLexer<RandomAccessIterator, TokenType, charT>::peek() {
     auto returnToken = SimpleBasicToken<TokenType>{};
 
     if (currentRuleList >= 0 && currentPosition < last) {
-        std::smatch firstMatch;
-        std::smatch m;
+        std::match_results<RandomAccessIterator> firstMatch;
+        std::match_results<RandomAccessIterator> m;
         for (const auto& r : grammar[currentRuleList]) {
             if (std::regex_search(currentPosition, last, m, r.regex()) && (firstMatch.empty() || m.position() < firstMatch.position() )) {
                 firstMatch = std::move(m);
@@ -228,9 +233,9 @@ ogla::SimpleBasicToken<TokenType> ogla::BasicLexer<RandomAccessIterator, TokenTy
 /*
 Convenience function that constructs and returns a `BasicLexer` object
 */
-template <typename RandomAccessIterator, typename TokenType>
-ogla::BasicLexer<RandomAccessIterator, TokenType> ogla::make_lexer(RandomAccessIterator first, RandomAccessIterator last, const SimpleBasicGrammar<TokenType>& grammar) {
-    return BasicLexer<RandomAccessIterator, TokenType>{first, last, grammar};
-}
+/*template <typename RandomAccessIterator, typename TokenType, typename charT> ogla::BasicLexer<RandomAccessIterator, TokenType>
+ogla::make_lexer(RandomAccessIterator first, RandomAccessIterator last, const BasicGrammar<TokenType, charT>& grammar) {
+    return BasicLexer<RandomAccessIterator, TokenType>(first, last, grammar);
+}*/
 
 #endif//OGLA_LEXERS_HPP
