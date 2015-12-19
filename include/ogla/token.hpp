@@ -22,7 +22,6 @@ Distributed under the Boost Software License, Version 1.0.
 #include "rule.hpp"
 
 // c++ standard libraries
-#include <regex>
 #include <string>
 #include <vector>
 
@@ -30,16 +29,17 @@ Distributed under the Boost Software License, Version 1.0.
 
 namespace ogla {
 
-template <typename TokenType, typename BidirectionalIterator> class BasicToken; // type representing a token in analyzed text
+template <typename TokenTypeT, typename BidirectionalIterator> class BasicToken; // type representing a token in analyzed text
 
 /*
 Convenience function that constructs and returns a `BasicToken` object.
 */
-template <typename TokenType, typename BidirectionalIterator> BasicToken<TokenType, BidirectionalIterator>
-make_token(const TokenType& tokenType, const std::match_results<BidirectionalIterator>& match, int pos);
+template <typename TokenTypeT, typename BidirectionalIterator>
+auto make_token(const TokenTypeT& tokenType, const std::match_results<BidirectionalIterator>& match, int pos)
+-> BasicToken<TokenTypeT, BidirectionalIterator>;
 
-template <typename TokenType, typename BidirectionalIterator>
-using BasicTokenList = std::vector<BasicToken<TokenType, BidirectionalIterator>>;
+template <typename TokenTypeT, typename BidirectionalIterator>
+using BasicTokenList = std::vector<BasicToken<TokenTypeT, BidirectionalIterator>>;
 
 }   // `ogla` namepsace
 
@@ -54,30 +54,30 @@ This essentailly offloads the work of learning the value of a token to an other 
 analyzer.
 
 The template paramaters are:
-* TokenType: the data type for the identifying the type/category of tokens the rule matches
+* TokenTypeT: the data type for the identifying the type/category of tokens the rule matches
 * BidirectionalIterator: the iterator used to store regex matches
 
 */
-template <typename TokenType, typename BidirectionalIterator>
+template <typename TokenTypeT, typename BidirectionalIterator>
 class ogla::BasicToken {
     public:
+        using TokenType = TokenTypeT;
         using RegExMatch = std::match_results<BidirectionalIterator>;
 
         BasicToken() = default;
-        BasicToken(TokenType _tokenType, const std::match_results<BidirectionalIterator>& _match, int _pos = -1)
+        BasicToken(TokenTypeT _tokenType, const std::match_results<BidirectionalIterator>& _match, int _pos = -1)
             :tokenType{_tokenType}, match{_match}, pos{_pos} {}
 
         bool empty() const;
         /*  returns true if the token is the result of an empty match (search result is empty) */
 
-        TokenType type() const;
+        auto type() const -> TokenType;
         /*  returns the type of the token */
 
         int position() const;
         /*  returns the specifed position of the token within the text searched (-1 is "no/don't care position") */
 
-        //std::string lexeme() const;
-        typename RegExMatch::string_type lexeme() const;
+        auto lexeme() const -> typename RegExMatch::string_type;
         /*  returns the lexeme of this token */
 
         bool operator==(const BasicToken& other) const;
@@ -85,7 +85,7 @@ class ogla::BasicToken {
         bool operator!=(const BasicToken& other) const;
 
     private:
-        TokenType tokenType;
+        TokenTypeT tokenType;
         RegExMatch match;   // the matched lexeme associated with the token
         int pos = -1;       // the assigned position of the token in the text (-1 is "no/don't care position")
 };
@@ -93,45 +93,45 @@ class ogla::BasicToken {
 /*
 returns true if the token is the result of an empty match (search result is empty)
 */
-template <typename TokenType, typename BidirectionalIterator>
-bool ogla::BasicToken<TokenType, BidirectionalIterator>::empty() const {
+template <typename TokenTypeT, typename BidirectionalIterator>
+bool ogla::BasicToken<TokenTypeT, BidirectionalIterator>::empty() const {
     return match.empty();
 }
 
 /*
 returns the type of the token
 */
-template <typename TokenType, typename BidirectionalIterator>
-TokenType ogla::BasicToken<TokenType, BidirectionalIterator>::type() const {
+template <typename TokenTypeT, typename BidirectionalIterator>
+auto ogla::BasicToken<TokenTypeT, BidirectionalIterator>::type() const -> TokenType {
     return tokenType;
 }
 
 /*
 returns the specifed position of the token within the text searched (-1 is "no/don't care position")
 */
-template <typename TokenType, typename BidirectionalIterator>
-int ogla::BasicToken<TokenType, BidirectionalIterator>::position() const {
+template <typename TokenTypeT, typename BidirectionalIterator>
+int ogla::BasicToken<TokenTypeT, BidirectionalIterator>::position() const {
     return pos;
 }
 
 /*
 returns the lexeme of this token
 */
-template <typename TokenType, typename BidirectionalIterator> typename
-ogla::BasicToken<TokenType, BidirectionalIterator>::RegExMatch::string_type ogla::BasicToken<TokenType, BidirectionalIterator>::lexeme() const {
+template <typename TokenTypeT, typename BidirectionalIterator>
+auto ogla::BasicToken<TokenTypeT, BidirectionalIterator>::lexeme() const -> typename RegExMatch::string_type {
     if (match.empty())
         return std::string();
     else
         return match.str();
 }
 
-template <typename TokenType, typename BidirectionalIterator>
-bool ogla::BasicToken<TokenType, BidirectionalIterator>::operator==(const BasicToken& other) const {
+template <typename TokenTypeT, typename BidirectionalIterator>
+bool ogla::BasicToken<TokenTypeT, BidirectionalIterator>::operator==(const BasicToken& other) const {
     return tokenType == other.tokenType && match == other.match && pos == other.pos;
 }
 
-template <typename TokenType, typename BidirectionalIterator>
-bool ogla::BasicToken<TokenType, BidirectionalIterator>::operator!=(const BasicToken& other) const {
+template <typename TokenTypeT, typename BidirectionalIterator>
+bool ogla::BasicToken<TokenTypeT, BidirectionalIterator>::operator!=(const BasicToken& other) const {
     return !(*this == other);
 }
 
@@ -140,9 +140,10 @@ bool ogla::BasicToken<TokenType, BidirectionalIterator>::operator!=(const BasicT
 /*
 Convenience function that constructs and returns a `BasicToken` object.
 */
-template <typename TokenType, typename BidirectionalIterator>
-ogla::BasicToken<TokenType, BidirectionalIterator> ogla::make_token(const TokenType& tokenType, const std::match_results<BidirectionalIterator>& match, int pos) {
-    return BasicToken<TokenType, BidirectionalIterator>{tokenType, match, pos};
+template <typename TokenTypeT, typename BidirectionalIterator>
+auto ogla::make_token(const TokenTypeT& tokenType, const std::match_results<BidirectionalIterator>& match, int pos)
+-> ogla::BasicToken<TokenTypeT, BidirectionalIterator> {
+    return BasicToken<TokenTypeT, BidirectionalIterator>{tokenType, match, pos};
 }
 
 #endif//OGLA_TOKEN_HPP

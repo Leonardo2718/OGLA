@@ -25,14 +25,15 @@ Distributed under the Boost Software License, Version 1.0.
 namespace ogla {
 
 template <typename TokenTypeT, typename LexerStateT, typename charT> class BasicRule; // type for describing a rule used to identify a token
-//template <typename TokenTypeT, typename LexerStateT> class BasicRule;
 
-template <typename TokenTypeT, typename LexerStateT, typename charT> BasicRule<TokenTypeT, LexerStateT, charT>
-make_basic_rule(const TokenTypeT& type, const std::basic_regex<charT>& regex, const LexerStateT& nextState);
+template <typename TokenTypeT, typename LexerStateT, typename charT>
+auto make_basic_rule(const TokenTypeT& type, const std::basic_regex<charT>& regex, const LexerStateT& nextState)
+-> BasicRule<TokenTypeT, LexerStateT, charT>;
 /*  convenience function that constructs and returns a `BasicRule` object */
 
-template <typename TokenTypeT, typename LexerStateT> BasicRule<TokenTypeT, LexerStateT, char>
-make_rule(const TokenTypeT& type, const std::string& regex, const LexerStateT& nextState);
+template <typename TokenTypeT, typename LexerStateT>
+auto make_rule(const TokenTypeT& type, const std::string& regex, const LexerStateT& nextState)
+-> BasicRule<TokenTypeT, LexerStateT, char>;
 /*  convenience function that constructs and returns a `BasicRule` object */
 
 }   // `ogla` namepsace
@@ -70,14 +71,13 @@ class ogla::BasicRule {
         BasicRule(const TokenTypeT& _type, const std::basic_regex<charT>& _regex, LexerStateT _nState)
             : tokenType{_type}, rgx{_regex}, nState{_nState} {}
 
-        TokenTypeT type() const;
+        auto type() const -> TokenType;
         /*  returns the type of token the rule finds */
 
-        //std::basic_regex<charT> regex() const;
-        RegEx regex() const;
+        auto regex() const -> RegEx;
         /*  returns the regular expression used to find the token associated with this rule */
 
-        LexerStateT nextState() const;
+        auto nextState() const -> LexerState;
         /*  returns the state the lexer should have after finding a token from this rule */
 
     private:
@@ -90,15 +90,15 @@ class ogla::BasicRule {
 returns the type of token the rule finds
 */
 template <typename TokenTypeT, typename LexerStateT, typename charT>
-TokenTypeT ogla::BasicRule<TokenTypeT, LexerStateT, charT>::type() const {
+auto ogla::BasicRule<TokenTypeT, LexerStateT, charT>::type() const -> TokenType {
     return tokenType;
 }
 
 /*
 returns the regular expression used to find the token associated with this rule
 */
-template <typename TokenTypeT, typename LexerStateT, typename charT> typename
-ogla::BasicRule<TokenTypeT, LexerStateT, charT>::RegEx ogla::BasicRule<TokenTypeT, LexerStateT, charT>::regex() const {
+template <typename TokenTypeT, typename LexerStateT, typename charT>
+auto ogla::BasicRule<TokenTypeT, LexerStateT, charT>::regex() const -> RegEx {
     return rgx;
 }
 
@@ -106,7 +106,7 @@ ogla::BasicRule<TokenTypeT, LexerStateT, charT>::RegEx ogla::BasicRule<TokenType
 returns the state the lexer should have after finding a token from this rule
 */
 template <typename TokenTypeT, typename LexerStateT, typename charT>
-LexerStateT ogla::BasicRule<TokenTypeT, LexerStateT, charT>::nextState() const {
+auto ogla::BasicRule<TokenTypeT, LexerStateT, charT>::nextState() const -> LexerState {
     return nState;
 }
 
@@ -115,16 +115,18 @@ LexerStateT ogla::BasicRule<TokenTypeT, LexerStateT, charT>::nextState() const {
 /*
 convenience function that constructs and returns a `BasicRule` object
 */
-template <typename TokenTypeT, typename LexerStateT, typename charT> ogla::BasicRule<TokenTypeT, LexerStateT, charT>
-ogla::make_basic_rule(const TokenTypeT& type, const std::basic_regex<charT>& regex, const LexerStateT& nextState) {
+template <typename TokenTypeT, typename LexerStateT, typename charT>
+auto ogla::make_basic_rule(const TokenTypeT& type, const std::basic_regex<charT>& regex, const LexerStateT& nextState)
+-> ogla::BasicRule<TokenTypeT, LexerStateT, charT> {
     return BasicRule<TokenTypeT, LexerStateT, charT>{type, regex, nextState};
 }
 
 /*
 convenience function that constructs and returns a `BasicRule` object
 */
-template <typename TokenTypeT, typename LexerStateT> ogla::BasicRule<TokenTypeT, LexerStateT, char>
-ogla::make_rule(const TokenTypeT& type, const std::string& regex, const LexerStateT& nextState) {
+template <typename TokenTypeT, typename LexerStateT>
+auto ogla::make_rule(const TokenTypeT& type, const std::string& regex, const LexerStateT& nextState)
+-> ogla::BasicRule<TokenTypeT, LexerStateT, char> {
     return BasicRule<TokenTypeT, LexerStateT, char>{type, std::regex(regex), nextState};
 }
 
