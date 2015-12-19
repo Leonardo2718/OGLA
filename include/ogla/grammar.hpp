@@ -39,7 +39,7 @@ namespace ogla {
 
     using BasicGrammarIndex = int;
     template<typename TokenType, typename charT>
-    using BasicGrammarRule = BasicRule<TokenType, BasicGrammarIndex, charT>;
+    using BasicGrammarRule = BasicRule<TokenType, charT, BasicGrammarIndex>;
     template<typename TokenType, typename charT>
     using BasicGrammar = std::vector<std::vector<BasicGrammarRule<TokenType, charT>>>;
 
