@@ -22,7 +22,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 // c++ standard libraries
 #include <vector>
-#include <tuple>
+#include <initializer_list>
 
 namespace ogla {
 
@@ -38,11 +38,27 @@ namespace ogla {
     #################################################################################################################*/
 
     using BasicGrammarIndex = int;
-    template<typename TokenType, typename charT>
+    template <typename TokenType, typename charT>
     using BasicGrammarRule = BasicRule<TokenType, charT, BasicGrammarIndex>;
-    template<typename TokenType, typename charT>
+    template <typename TokenType, typename charT>
     using BasicGrammar = std::vector<std::vector<BasicGrammarRule<TokenType, charT>>>;
 
+    template <typename TokenType, typename charT>
+    auto make_basic_grammar(std::initializer_list<std::initializer_list<BasicGrammarRule<TokenType, charT>>> rules)
+    -> BasicGrammar<TokenType, charT>;
+    /*  convenience function for creating a grammar */
+
 }   // namespace `ogla`
+
+
+
+/*
+convenience function for creating a grammar
+*/
+template <typename TokenType, typename charT>
+auto ogla::make_basic_grammar(std::initializer_list<std::initializer_list<BasicGrammarRule<TokenType, charT>>> rules)
+-> BasicGrammar<TokenType, charT> {
+    return BasicGrammar<TokenType, charT>{rules.begin(), rules.end()};
+}
 
 #endif//OGLA_GRAMMAR_HPP

@@ -31,16 +31,36 @@ const std::string text{"The quick brown fox jumps over the lazy dog.\n"
                  "This is \"an \\t attempt\" to parse a string\n"};
 
 // the test rules to be used by the lexer
-const auto grammar = ogla::BasicGrammar<std::string, char>{
-    {ogla::make_basic_rule(std::string("foo_rule"), std::regex("foo"), 0),    // must convert explicitly to string because argument is templated
-    ogla::make_basic_rule(std::string("bar_rule"), std::regex("\\bbar\\b"), 0),
-    ogla::make_basic_rule(std::string("quux_rule"), std::regex("\\bqu+x\\b"), 0),
-    ogla::make_basic_rule(std::string("quick_rule"), std::regex("\\bquick\\b"), 0),
-    ogla::make_basic_rule(std::string("c_rule"), std::regex("\\b[A-Za-z]+c[A-Za-z]+\\b"), 0),
-    ogla::make_basic_rule(std::string("str_rule"), std::regex("\""), 1)},
+const auto grammar = ogla::make_basic_grammar({
+    {   // objects must convert explicitly constructed because parameters are templated
+        ogla::make_basic_rule(std::string("foo_rule"), std::regex("foo"), 0),
+        ogla::make_basic_rule(std::string("bar_rule"), std::regex("\\bbar\\b"), 0),
+        ogla::make_basic_rule(std::string("quux_rule"), std::regex("\\bqu+x\\b"), 0),
+        ogla::make_basic_rule(std::string("quick_rule"), std::regex("\\bquick\\b"), 0),
+        ogla::make_basic_rule(std::string("c_rule"), std::regex("\\b[A-Za-z]+c[A-Za-z]+\\b"), 0),
+        ogla::make_basic_rule(std::string("str_rule"), std::regex("\""), 1)
+    }
+    ,
+    {
+        ogla::make_basic_rule(std::string("escape_rule"), std::regex("\\\\."), 1),
+        ogla::make_basic_rule(std::string("end_str_rule"), std::regex("\""), 0)
+    }
+});
 
-    {ogla::make_basic_rule(std::string("escape_rule"), std::regex("\\\\."), 1),
-    ogla::make_basic_rule(std::string("end_str_rule"), std::regex("\""), 0)}
+const std::vector<std::vector<std::tuple<std::string, int>>> expected_rules = {
+    {
+        std::make_tuple(std::string("foo_rule"), 0),
+        std::make_tuple(std::string("bar_rule"), 0),
+        std::make_tuple(std::string("quux_rule"), 0),
+        std::make_tuple(std::string("quick_rule"), 0),
+        std::make_tuple(std::string("c_rule"), 0),
+        std::make_tuple(std::string("str_rule"), 1)
+    }
+    ,
+    {
+        std::make_tuple(std::string("escape_rule"), 1),
+        std::make_tuple(std::string("end_str_rule"), 0)
+    }
 };
 
 // a representation of the tokens expected from the lexer
@@ -70,6 +90,19 @@ const std::vector<std::tuple<std::string, std::string, int>> expected_tokens = {
 
 //~tests~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+BOOST_AUTO_TEST_CASE( test_make_grammar ) {
+    BOOST_TEST(grammar.size() == expected_rules.size());
+    for (int i = 0, l = grammar.size(); i < l; i++) {
+
+        BOOST_TEST(grammar[i].size() == expected_rules[i].size());
+        for (int j = 0, m = grammar[i].size(); j < m; j++) {
+            BOOST_TEST(grammar[i][j].type() == std::get<0>(expected_rules[i][j]));
+            BOOST_TEST(grammar[i][j].nextState() == std::get<1>(expected_rules[i][j]));
+        }
+
+    }
+}
+
 BOOST_AUTO_TEST_CASE( test_analyze ) {
     // pre-test code
     auto tokens = ogla::basic_analyze(text.cbegin(), text.cend(), grammar);
@@ -84,8 +117,6 @@ BOOST_AUTO_TEST_CASE( test_analyze ) {
         BOOST_CHECK_MESSAGE(token.position() == std::get<2>(expected_tokens[i]), MAKE_MESSAGE(token,(expected_tokens[i])));
     }
 }
-
-
 
 BOOST_AUTO_TEST_CASE( test_BasicLexer ) {
     // pre-test code
