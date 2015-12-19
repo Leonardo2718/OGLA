@@ -32,15 +32,15 @@ const std::string text{"The quick brown fox jumps over the lazy dog.\n"
 
 // the test rules to be used by the lexer
 const auto grammar = ogla::BasicGrammar<std::string, char>{
-    {ogla::make_rule(std::string("foo_rule"), "foo", 0),    // must convert explicitly to string because argument is templated
-    ogla::make_rule(std::string("bar_rule"), "\\bbar\\b", 0),
-    ogla::make_rule(std::string("quux_rule"), "\\bqu+x\\b", 0),
-    ogla::make_rule(std::string("quick_rule"), "\\bquick\\b", 0),
-    ogla::make_rule(std::string("c_rule"), "\\b[A-Za-z]+c[A-Za-z]+\\b", 0),
-    ogla::make_rule(std::string("str_rule"), "\"", 1)},
+    {ogla::make_basic_rule(std::string("foo_rule"), std::regex("foo"), 0),    // must convert explicitly to string because argument is templated
+    ogla::make_basic_rule(std::string("bar_rule"), std::regex("\\bbar\\b"), 0),
+    ogla::make_basic_rule(std::string("quux_rule"), std::regex("\\bqu+x\\b"), 0),
+    ogla::make_basic_rule(std::string("quick_rule"), std::regex("\\bquick\\b"), 0),
+    ogla::make_basic_rule(std::string("c_rule"), std::regex("\\b[A-Za-z]+c[A-Za-z]+\\b"), 0),
+    ogla::make_basic_rule(std::string("str_rule"), std::regex("\""), 1)},
 
-    {ogla::make_rule(std::string("escape_rule"), "\\\\.", 1),
-    ogla::make_rule(std::string("end_str_rule"), "\"", 0)}
+    {ogla::make_basic_rule(std::string("escape_rule"), std::regex("\\\\."), 1),
+    ogla::make_basic_rule(std::string("end_str_rule"), std::regex("\""), 0)}
 };
 
 // a representation of the tokens expected from the lexer
