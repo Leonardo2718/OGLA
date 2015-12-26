@@ -3,7 +3,7 @@ Project: OGLA
 File: grammar.hpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: December 17, 2015
+Last Modified: December 18, 2015
 
 Description:
     A `Grammar` is a set of tokenization rules that collectively define a "language".  A grammar can be used to analyze
@@ -21,9 +21,8 @@ Distributed under the Boost Software License, Version 1.0.
 #include "token.hpp"
 
 // c++ standard libraries
-//#include <type_traits>
 #include <vector>
-#include <tuple>
+#include <initializer_list>
 
 namespace ogla {
 
@@ -39,42 +38,27 @@ namespace ogla {
     #################################################################################################################*/
 
     using BasicGrammarIndex = int;
-    template<typename TokenType>
-    using BasicGrammarRule = BasicRule<TokenType, BasicGrammarIndex>;
-    template<typename TokenType>
-    using BasicGrammar = std::vector<std::vector<BasicGrammarRule<TokenType>>>;
+    template <typename TokenType, typename charT>
+    using BasicGrammarRule = BasicRule<TokenType, charT, BasicGrammarIndex>;
+    template <typename TokenType, typename charT>
+    using BasicGrammar = std::vector<std::vector<BasicGrammarRule<TokenType, charT>>>;
 
-    template<typename BidirectionalIterator, typename TokenType>
-    std::tuple<ogla::smatch, int> first_match(BidirectionalIterator first, BidirectionalIterator last, std::vector<BasicGrammarRule<TokenType>> ruleList);
-    /*
-    Given iterators to the start and one-past-the-end of a string, returns a `std::pair` containing the index of the
-    rule that gets matched first (with resptect to position in the text) as well as the `ogla::smatch` itself.
-    */
+    template <typename TokenType, typename charT>
+    auto make_basic_grammar(std::initializer_list<std::initializer_list<BasicGrammarRule<TokenType, charT>>> rules)
+    -> BasicGrammar<TokenType, charT>;
+    /*  convenience function for creating a grammar */
 
 }   // namespace `ogla`
 
 
 
 /*
-Given iterators to the start and one-past-the-end of a string, returns a `std::pair` containing the index of the
-rule that gets matched first (with resptect to position in the text) as well as the `ogla::smatch` itself.
+convenience function for creating a grammar
 */
-template<typename BidirectionalIterator, typename TokenType>
-std::tuple<ogla::smatch, int> ogla::first_match(BidirectionalIterator first, BidirectionalIterator last, std::vector<BasicGrammarRule<TokenType>> ruleList) {
-    int ruleIndex = -1;
-    ogla::smatch match;
-    ogla::smatch tmpMatch;
-
-    // look for the rule that has the first match (in terms of position in the text)
-    for (int i = 0, count = ruleList.size(); i < count; ++i) {
-        if (boost::regex_search(first, last, tmpMatch, ruleList[i].regex())
-                            && (ruleIndex < 0 || tmpMatch.position() < match.position())) {
-            match = std::move(tmpMatch);
-            ruleIndex = i;
-        }
-    }
-
-    return make_tuple(match, ruleIndex);
+template <typename TokenType, typename charT>
+auto ogla::make_basic_grammar(std::initializer_list<std::initializer_list<BasicGrammarRule<TokenType, charT>>> rules)
+-> BasicGrammar<TokenType, charT> {
+    return BasicGrammar<TokenType, charT>{rules.begin(), rules.end()};
 }
 
 #endif//OGLA_GRAMMAR_HPP

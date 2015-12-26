@@ -3,7 +3,7 @@ Project: OGLA
 File: token.hpp
 Author: Leonardo Banderali
 Created: July 7, 2015
-Last Modified: December 17, 2015
+Last Modified: December 18, 2015
 
 Description:
     A `Token` is a unit of analyzed text and is identified using a `Rule`.  These form the basic building blocks of the
@@ -18,15 +18,12 @@ Distributed under the Boost Software License, Version 1.0.
 #ifndef OGLA_TOKEN_HPP
 #define OGLA_TOKEN_HPP
 
+// project headers
+#include "rule.hpp"
+
 // c++ standard libraries
 #include <string>
 #include <vector>
-
-// macro definitions for boost libraries
-#define BOOST_REGEX_USE_CPP_LOCALE
-
-// boost libraries
-#include <boost/regex.hpp>
 
 //~forward declare namespace members~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -34,24 +31,17 @@ namespace ogla {
 
 using smatch = boost::match_results<std::string::const_iterator>;
 
-template <typename TokenType, typename LexerState> class BasicRule; // type for describing a rule used to identify a token
-
-/*
-Convenience function that constructs and returns a `BasicRule` object.
-*/
-template <typename TokenType, typename LexerState>
-BasicRule<TokenType, LexerState> make_rule(const TokenType& type, const std::string& regex, const LexerState& nextState);
-
-template <typename TokenType> class BasicToken; // type representing a token in analyzed text
+template <typename BidirectionalIterator, typename TokenTypeT> class BasicToken; // type representing a token in analyzed text
 
 /*
 Convenience function that constructs and returns a `BasicToken` object.
 */
-template <typename TokenType> BasicToken<TokenType>
-make_token(const TokenType& tokenType, const ogla::smatch& match, int pos);
+template <typename BidirectionalIterator, typename TokenTypeT>
+auto make_token(const TokenTypeT& tokenType, const boost::match_results<BidirectionalIterator>& match, int pos)
+-> BasicToken<BidirectionalIterator, TokenTypeT>;
 
-template <typename TokenType>
-using BasicTokenList = std::vector<BasicToken<TokenType>>;
+template <typename BidirectionalIterator, typename TokenTypeT>
+using BasicTokenList = std::vector<BasicToken<BidirectionalIterator, TokenTypeT>>;
 
 }   // `ogla` namepsace
 
@@ -60,103 +50,38 @@ using BasicTokenList = std::vector<BasicToken<TokenType>>;
 //~Implementations~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /*
-A class template for describing a rule used to find a token (a tokenization rule).  A rule essentially containes the
-information needed by a lexer to find a token.  It also containes some information (a hint) as to what the lexer
-*should* do if it finds a token using this rule.  Semantically, this information is represented as a state.  This makes
-the most sence when thinking about the lexer as a finite-state-machine (FSM).
-
-Rules have three basic properties:
-1. a token type (which is the type or category of tokens the rule finds)
-2. the regular expression used to search text
-3. a definition of what the state of a lexer should be after generating/finding a token using the rule
-
-Each rule should only be used to search for a single category of token.  For example, "keyword" can be a category.
-*/
-template <typename TokenType, typename LexerState>
-class ogla::BasicRule {
-    public:
-        BasicRule(LexerState _nState) : nState{_nState} {}
-        BasicRule(const TokenType& _type, const std::string& _regex, LexerState _nState)
-            : tokenType{_type}, rgx{_regex}, nState{_nState} {}
-
-        TokenType type() const;
-        /*  returns the type of token the rule finds */
-
-        boost::regex regex() const;
-        /*  returns the regular expression used to find the token associated with this rule */
-
-        LexerState nextState() const;
-        /*  returns the state the lexer should have after finding a token from this rule */
-
-    private:
-        TokenType tokenType;
-        boost::regex rgx;         // holds the regular expression (regex) used to indentify the token
-        LexerState nState;   // points to (but does not own) the next rules to be used for tokenization
-};
-
-/*
-returns the type of token the rule finds
-*/
-template <typename TokenType, typename LexerState>
-TokenType ogla::BasicRule<TokenType, LexerState>::type() const {
-    return tokenType;
-}
-
-/*
-returns the regular expression used to find the token associated with this rule
-*/
-template <typename TokenType, typename LexerState>
-boost::regex ogla::BasicRule<TokenType, LexerState>::regex() const {
-    return rgx;
-}
-
-/*
-returns the state the lexer should have after finding a token from this rule
-*/
-template <typename TokenType, typename LexerState>
-LexerState ogla::BasicRule<TokenType, LexerState>::nextState() const {
-    return nState;
-}
-
-
-
-/*
-Convenience function that constructs and returns a `BasicRule` object.
-*/
-template <typename TokenType, typename LexerState>
-ogla::BasicRule<TokenType, LexerState> ogla::make_rule(const TokenType& type, const std::string& regex, const LexerState& nextState) {
-    return BasicRule<TokenType, LexerState>{type, regex, nextState};
-}
-
-
-
-/*
-As the name suggests, `Token` is a class that represents a token.  Tokens are generated by a lexer using rules.
+As the name suggests, `BasicToken` is a class that represents a token.  Tokens are generated by a lexer using rules.
 For the sake of generality, an instance of this class only containes basic information about a token, including:
-its name (or category), its corresponding lexeme, and its position in the text (which may be specified optionally).
+its type (or category), its corresponding lexeme, and its position in the text (which may be optionally specified).
 Any other information needed must be extracted by the user from the lexeme and other information already provided.
 This essentailly offloads the work of learning the value of a token to an other tool such as a parser or semantic
 analyzer.
+
+The template paramaters are:
+* TokenTypeT: the data type for the identifying the type/category of tokens the rule matches
+* BidirectionalIterator: the iterator used to store regex matches
+
 */
-template <typename TokenType>
+template <typename BidirectionalIterator, typename TokenTypeT>
 class ogla::BasicToken {
     public:
+        using TokenType = TokenTypeT;
+        using RegExMatch = boost::match_results<BidirectionalIterator>;
+
         BasicToken() = default;
-        //BasicToken(const std::string& _tokenType, const ogla::smatch& _match, int _pos = -1)
-        BasicToken(TokenType _tokenType, const ogla::smatch& _match, int _pos = -1)
+        BasicToken(TokenTypeT _tokenType, const boost::match_results<BidirectionalIterator>& _match, int _pos = -1)
             :tokenType{_tokenType}, match{_match}, pos{_pos} {}
 
         bool empty() const;
         /*  returns true if the token is the result of an empty match (search result is empty) */
 
-        //std::string type() const;
-        TokenType type() const;
+        auto type() const -> TokenType;
         /*  returns the type of the token */
 
         int position() const;
         /*  returns the specifed position of the token within the text searched (-1 is "no/don't care position") */
 
-        std::string lexeme() const;
+        auto lexeme() const -> typename RegExMatch::string_type;
         /*  returns the lexeme of this token */
 
         bool operator==(const BasicToken& other) const;
@@ -164,54 +89,53 @@ class ogla::BasicToken {
         bool operator!=(const BasicToken& other) const;
 
     private:
-        //std::string tokenType;
-        TokenType tokenType;
-        ogla::smatch match;  // the matched lexeme associated with the token
+        TokenTypeT tokenType;
+        RegExMatch match;   // the matched lexeme associated with the token
         int pos = -1;       // the assigned position of the token in the text (-1 is "no/don't care position")
 };
 
 /*
 returns true if the token is the result of an empty match (search result is empty)
 */
-template <typename TokenType>
-bool ogla::BasicToken<TokenType>::empty() const {
+template <typename BidirectionalIterator, typename TokenTypeT>
+bool ogla::BasicToken<BidirectionalIterator, TokenTypeT>::empty() const {
     return match.empty();
 }
 
 /*
 returns the type of the token
 */
-template <typename TokenType>
-TokenType ogla::BasicToken<TokenType>::type() const {
+template <typename BidirectionalIterator, typename TokenTypeT>
+auto ogla::BasicToken<BidirectionalIterator, TokenTypeT>::type() const -> TokenType {
     return tokenType;
 }
 
 /*
 returns the specifed position of the token within the text searched (-1 is "no/don't care position")
 */
-template <typename TokenType>
-int ogla::BasicToken<TokenType>::position() const {
+template <typename BidirectionalIterator, typename TokenTypeT>
+int ogla::BasicToken<BidirectionalIterator, TokenTypeT>::position() const {
     return pos;
 }
 
 /*
 returns the lexeme of this token
 */
-template <typename TokenType>
-std::string ogla::BasicToken<TokenType>::lexeme() const {
+template <typename BidirectionalIterator, typename TokenTypeT>
+auto ogla::BasicToken<BidirectionalIterator, TokenTypeT>::lexeme() const -> typename RegExMatch::string_type {
     if (match.empty())
         return std::string();
     else
         return match.str();
 }
 
-template <typename TokenType>
-bool ogla::BasicToken<TokenType>::operator==(const BasicToken& other) const {
+template <typename BidirectionalIterator, typename TokenTypeT>
+bool ogla::BasicToken<BidirectionalIterator, TokenTypeT>::operator==(const BasicToken& other) const {
     return tokenType == other.tokenType && match == other.match && pos == other.pos;
 }
 
-template <typename TokenType>
-bool ogla::BasicToken<TokenType>::operator!=(const BasicToken& other) const {
+template <typename BidirectionalIterator, typename TokenTypeT>
+bool ogla::BasicToken<BidirectionalIterator, TokenTypeT>::operator!=(const BasicToken& other) const {
     return !(*this == other);
 }
 
@@ -220,9 +144,10 @@ bool ogla::BasicToken<TokenType>::operator!=(const BasicToken& other) const {
 /*
 Convenience function that constructs and returns a `BasicToken` object.
 */
-template <typename TokenType>
-ogla::BasicToken<TokenType> ogla::make_token(const TokenType& tokenType, const ogla::smatch& match, int pos) {
-    return BasicToken<TokenType>{tokenType, match, pos};
+template <typename BidirectionalIterator, typename TokenTypeT>
+auto ogla::make_token(const TokenTypeT& tokenType, const boost::match_results<BidirectionalIterator>& match, int pos)
+-> ogla::BasicToken<BidirectionalIterator, TokenTypeT> {
+    return BasicToken<BidirectionalIterator, TokenTypeT>{tokenType, match, pos};
 }
 
 #endif//OGLA_TOKEN_HPP
