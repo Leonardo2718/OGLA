@@ -3,7 +3,7 @@ Project: OGLA
 File: lexers.hpp
 Author: Leonardo Banderali
 Created: August 30, 2015
-Last Modified: December 18, 2015
+Last Modified: December 25, 2015
 
 Description:
     This file declares some lexers that make use of the facilities provided by this library.  As with the rest of this
@@ -71,14 +71,17 @@ Generates a list of tokens form some text and the rules stored in a grammar.
 template <typename RandomAccessIterator, typename TokenTypeT, typename charT> auto
 ogla::basic_analyze(RandomAccessIterator first, RandomAccessIterator last, const BasicGrammar<TokenTypeT, charT>& grammar)
 -> typename ogla::BasicTokenList<RandomAccessIterator, TokenTypeT> {
+    using RegExMatch = typename BasicToken<RandomAccessIterator, TokenTypeT>::RegExMatch;
+    using GrammarRule = BasicGrammarRule<TokenTypeT, charT>;
+
     BasicTokenList<RandomAccessIterator, TokenTypeT> tokenList;
     RandomAccessIterator currentPosition = first;
     auto currentRuleList = 0;
 
     while (currentPosition < last) {
-        BasicGrammarRule<TokenTypeT, charT> rule{-1};
-        std::match_results<RandomAccessIterator> firstMatch;
-        std::match_results<RandomAccessIterator> m;
+        GrammarRule rule{-1};
+        RegExMatch firstMatch;
+        RegExMatch m;
         for (const auto& r : grammar[currentRuleList]) {
             if (std::regex_search(currentPosition, last, m, r.regex()) && (firstMatch.empty() || m.position() < firstMatch.position() )) {
                 firstMatch = std::move(m);
@@ -116,6 +119,7 @@ class ogla::BasicLexer {
     public:
         using Token = BasicToken<RandomAccessIterator, TokenTypeT>;
         using Grammar = BasicGrammar<TokenTypeT, charT>;
+        using GrammarRule = BasicGrammarRule<TokenTypeT, charT>;
 
         BasicLexer(RandomAccessIterator _first, RandomAccessIterator _last, const BasicGrammar<TokenTypeT, charT>& _grammar);
         /*  @param first: points to the the start of the text
@@ -170,11 +174,11 @@ generates, returns, and moves the internal reference to the next token in the te
 template <typename RandomAccessIterator, typename TokenTypeT, typename charT>
 auto ogla::BasicLexer<RandomAccessIterator, TokenTypeT, charT>::next() -> Token {
     if (currentRuleList < 0 || currentPosition >= last) {
-        currentToken = BasicToken<RandomAccessIterator, TokenTypeT>{};     // if the grammar index is negative, return an empty token
+        currentToken = Token{}; // if the grammar index is negative, return an empty token
     } else {
-        BasicGrammarRule<TokenTypeT, charT> rule{-1};
-        std::match_results<RandomAccessIterator> firstMatch;
-        std::match_results<RandomAccessIterator> m;
+        GrammarRule rule{-1};
+        typename Token::RegExMatch firstMatch;
+        typename Token::RegExMatch m;
         for (const auto& r : grammar[currentRuleList]) {
             if (std::regex_search(currentPosition, last, m, r.regex()) && (firstMatch.empty() || m.position() < firstMatch.position() )) {
                 firstMatch = std::move(m);
@@ -183,7 +187,7 @@ auto ogla::BasicLexer<RandomAccessIterator, TokenTypeT, charT>::next() -> Token 
         }
 
         if (firstMatch.empty()) {
-            currentToken = BasicToken<RandomAccessIterator, TokenTypeT>{};
+            currentToken = Token{};
         } else {
             currentPosition += firstMatch.position();
             currentToken = make_token(rule.type(), firstMatch, currentPosition - first);
@@ -200,11 +204,11 @@ generates and returns the next token but does not set the internal reference to 
 */
 template <typename RandomAccessIterator, typename TokenTypeT, typename charT>
 auto ogla::BasicLexer<RandomAccessIterator, TokenTypeT, charT>::peek() -> Token {
-    auto returnToken = BasicToken<RandomAccessIterator, TokenTypeT>{};
+    auto returnToken = Token{};
 
     if (currentRuleList >= 0 && currentPosition < last) {
-        std::match_results<RandomAccessIterator> firstMatch;
-        std::match_results<RandomAccessIterator> m;
+        typename Token::RegExMatch firstMatch;
+        typename Token::RegExMatch m;
         for (const auto& r : grammar[currentRuleList]) {
             if (std::regex_search(currentPosition, last, m, r.regex()) && (firstMatch.empty() || m.position() < firstMatch.position() )) {
                 firstMatch = std::move(m);
